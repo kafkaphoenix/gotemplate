@@ -20,10 +20,14 @@ mocks: ## Generates mocks
 build-docker: ## Build the Docker image
 	docker build -t app -f Dockerfile .
 
-.PHONY: run-docker-server
-run-docker-server: ## Run the Docker server
-	docker run -it --rm app /app/server
+.PHONY: run-docker-service
+run-docker-service: ## Run the Docker service
+	docker run -it --rm app /app/service
 
 .PHONY: run-docker-cli
 run-docker-cli: ## Run the Docker CLI
 	docker run -it --rm app /app/cli $(ARGS)
+
+.PHONY: attach-docker
+attach-docker: ## Attach to the Docker container
+	docker-compose run -it --rm --entrypoint="/bin/bash" app

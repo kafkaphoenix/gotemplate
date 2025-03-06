@@ -14,13 +14,13 @@ COPY . .
 
 # download dependencies with cache mount for better performance
 RUN --mount=type=cache,target=/go/pkg/mod \
-    go mod download                    && \
+    go mod download && \
     go mod verify
 
 # -ldflags optimize binary size
 # -trimpath remove absolute path from binary
-RUN go build -ldflags="-s -w -extldflags '-static'" -trimpath -o server cmd/server/main.go
-RUN go build -ldflags="-s -w -extldflags '-static'" -trimpath -o cli cmd/cli/main.go
+RUN go build -ldflags="-s -w -extldflags '-static'" -trimpath -o service ./cmd/service/main.go
+RUN go build -ldflags="-s -w -extldflags '-static'" -trimpath -o cli ./cmd/cli/main.go
 
 # final image
 # alpine:3.21

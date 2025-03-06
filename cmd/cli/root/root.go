@@ -1,7 +1,7 @@
 package root
 
 import (
-	"gotemplate/cmd/cli/user"
+	"github.com/kafkaphoenix/gotemplate/cmd/cli/user"
 
 	"github.com/rs/zerolog"
 	"github.com/spf13/cobra"
