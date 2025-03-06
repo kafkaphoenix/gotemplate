@@ -30,4 +30,4 @@ run-docker-cli: ## Run the Docker CLI
 
 .PHONY: attach-docker
 attach-docker: ## Attach to the Docker container
-	docker-compose run -it --rm --entrypoint="/bin/bash" app
+	docker run -it --rm --entrypoint /bin/sh app

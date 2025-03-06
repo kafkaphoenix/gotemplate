@@ -47,7 +47,7 @@ RUN apk update && apk upgrade && \
 WORKDIR /app
 
 # copy binaries from builder
-COPY --from=builder --chown=${UID}:${GID} /app/server .
+COPY --from=builder --chown=${UID}:${GID} /app/service .
 COPY --from=builder --chown=${UID}:${GID} /app/cli .
 
 # drop root privileges
