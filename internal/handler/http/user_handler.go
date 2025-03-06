@@ -3,11 +3,10 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
-	"github.com/kafkaphoenix/gotemplate/internal/usecase"
-	"github.com/kafkaphoenix/gotemplate/internal/domain"
+
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
-	"log"
+	"github.com/kafkaphoenix/gotemplate/internal/usecase"
 )
 
 // UserHandler is responsible for handling HTTP requests related to users.

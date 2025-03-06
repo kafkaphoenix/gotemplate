@@ -4,9 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"time"
-	"github.com/kafkaphoenix/gotemplate/internal/domain"
+
 	"github.com/google/uuid"
+	"github.com/kafkaphoenix/gotemplate/internal/domain"
 	_ "github.com/lib/pq" // PostgreSQL driver
 )
 
