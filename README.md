@@ -9,11 +9,20 @@ This is a template for a golang project with a postgres database. It includes a 
 It follows a hexagonal architecture. Nats for notifications.
 
 ## Requirements
-
-- go 1.24
+you will need sudo for the commands
+- go 1.24 https://go.dev/doc/install
+`curl -L -o go1.24.1.linux-amd64.tar.gz https://go.dev/dl/go1.24.1.linux-amd64.tar.gz`
+`rm -rf /usr/local/go && tar -C /usr/local -xzf go1.24.1.linux-amd64.tar.gz && rm go1.24.1.linux-amd64.tar.gz`
+add to your ~/.bashrc `export PATH=$PATH:/usr/local/go/bin`
 - golangci-lint https://golangci-lint.run/welcome/install/
+`curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.64.6`
 - docker
 - docker-compose
+- proto https://protobuf.dev/getting-started/gotutorial/ https://grpc.io/docs/protoc-installation/
+`go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.30.0`
+`go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.3.0`
+
+
 
 ## Dependencies
 

@@ -16,6 +16,10 @@ tests: ## Executes api tests
 mocks: ## Generates mocks
 	go generate ./...
 
+.PHONY: proto
+proto: ## Generates proto files
+	protoc -I=./proto --go_out=proto --go_opt=paths=source_relative --go-grpc_out=./proto --go-grpc_opt=paths=source_relative proto/user.proto
+
 .PHONY: build-docker
 build-docker: ## Build the Docker image
 	docker build -t app -f Dockerfile .

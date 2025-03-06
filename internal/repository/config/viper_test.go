@@ -21,11 +21,11 @@ func TestInit_OK(t *testing.T) {
 	config.Init()
 
 	// THEN
-	assert.Equal(t, "5432", viper.GetString("DB_PORT"))
-	assert.Equal(t, "user", viper.GetString("DB_USER"))
-	assert.Equal(t, "password", viper.GetString("DB_PASSWORD"))
-	assert.Equal(t, "postgresdb", viper.GetString("DB_NAME"))
-	assert.Equal(t, "4222", viper.GetString("NATS_PORT"))
-	assert.Equal(t, "8222", viper.GetString("NATS_MONITOR_PORT"))
-	assert.Equal(t, "8081", viper.GetString("APP_PORT"))
+	assert.Equal(t, "5432", viper.GetString(DB_PORT_KEY))
+	assert.Equal(t, "user", viper.GetString(DB_USER_KEY))
+	assert.Equal(t, "password", viper.GetString(DB_PASSWORD_KEY))
+	assert.Equal(t, "postgresdb", viper.GetString(DB_NAME_KEY))
+	assert.Equal(t, "4222", viper.GetString(NATS_PORT_KEY))
+	assert.Equal(t, "8222", viper.GetString(NATS_MONITOR_PORT_KEY))
+	assert.Equal(t, "8081", viper.GetString(APP_PORT_KEY))
 }

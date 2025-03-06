@@ -9,6 +9,7 @@ require (
 	github.com/spf13/cobra v1.9.1
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.10.0
+	google.golang.org/protobuf v1.36.1
 )
 
 require (
