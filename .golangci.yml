@@ -1,0 +1,369 @@
+run:
+  # Timeout for analysis, e.g. 30s, 5m.
+  # Default: 1m
+  timeout: 3m
+
+# All available linters https://golangci-lint.run/usage/linters/
+# All possible options can be found here https://github.com/golangci/golangci-lint/blob/master/.golangci.reference.yml
+linters-settings:
+  cyclop:
+    # The maximal code complexity to report.
+    # Default: 10
+    max-complexity: 15
+    # The maximal average package complexity.
+    # If it's higher than 0.0 (float) the check is enabled
+    # Default: 0.0
+    package-average: 10.0
+
+  dogsled:
+    # checks assignments with too many blank identifiers; default is 2
+    #max-blank-identifiers: 2
+
+  dupl:
+    # tokens count to trigger issue, 150 by default
+    threshold: 100
+
+  errcheck:
+    # Report about not checking of errors in type assertions: `a := b.(MyStruct)`.
+    # Such cases aren't reported by default.
+    # Default: false
+    check-type-assertions: true
+
+    # Report about assignment of errors to blank identifier: `num, _ := strconv.Atoi(numStr)`;
+    # Such cases aren't reported by default.
+    # Default: false
+    check-blank: true
+
+  errorlint:
+    # Check whether fmt.Errorf uses the %w verb for formatting errors. See the readme for caveats
+    errorf: true
+    # Check for plain type assertions and type switches
+    asserts: true
+    # Check for plain error comparisons
+    comparison: true
+
+  exhaustive:
+    # Program elements to check for exhaustiveness.
+    # Default: [ switch ]
+    check:
+      - switch
+      - map
+    # Indicates that switch statements are to be considered exhaustive if a
+    # 'default' case is present, even if all enum members aren't listed in the switch
+    default-signifies-exhaustive: false
+
+  funlen:
+    # Checks the number of lines in a function.
+    # If lower than 0, disable the check.
+    # Default: 60
+    lines: 100
+    # Checks the number of statements in a function.
+    # If lower than 0, disable the check.
+    # Default: 40
+    statements: 50
+    # Ignore comments when counting lines.
+    # Default false
+    ignore-comments: true
+
+  gocognit:
+    # Minimal code complexity to report.
+    # Default: 30 (but we recommend 10-20)
+    min-complexity: 20
+
+  goconst:
+    # Minimal length of string constant, 3 by default
+    min-len: 2
+    # Minimal occurrences count to trigger, 3 by default
+    min-occurrences: 2
+
+  gocritic:
+    # Settings passed to gocritic.
+    # The settings key is the name of a supported gocritic checker.
+    # The list of supported checkers can be find in https://go-critic.github.io/overview.
+    settings:
+      captLocal:
+        # Whether to restrict checker to params only.
+        # Default: true
+        paramsOnly: false
+      underef:
+        # Whether to skip (*x).method() calls where x is a pointer receiver.
+        # Default: true
+        skipRecvDeref: false
+
+  gocyclo:
+    # Minimal code complexity to report, 30 by default (but we recommend 10-20)
+    min-complexity: 15
+
+  godot:
+    # Comments to be checked: `declarations`, `toplevel`, or `all`
+    scope: declarations
+    # # List of regexps for excluding particular comment lines from check
+    # exclude:
+    #   # Example: exclude comments which contain numbers
+    #   - ':$'
+    # Check that each sentence starts with a capital letter
+    capital: false
+
+  godox:
+    # Report any comments starting with keywords, this is useful for TODO or FIXME comments that
+    # might be left in the code accidentally and should be resolved before merging
+    keywords: # default keywords are TODO, BUG, and FIXME, these can be overwritten by this setting
+      - BUG   # marks issues that should be moved to issue tracker before merging
+      - FIXME # marks issues that should be resolved before merging
+      - DEBUG # marks temporary code that should be removed before merging
+
+  gofmt:
+    # Simplify code: gofmt with `-s` option, true by default
+    simplify: true
+
+  goimports:
+    # Put imports beginning with prefix after 3rd-party packages;
+    # It's a comma-separated list of prefixes
+    local-prefixes: github.com/kafkaphoenix/work
+
+  gosec:
+    # To select a subset of rules to run.
+    # Available rules: https://github.com/securego/gosec#available-rules
+    includes:
+      #- G401
+      #- G306
+      #- G101
+    # To specify a set of rules to explicitly exclude.
+    # Available rules: https://github.com/securego/gosec#available-rules
+    excludes:
+      #- G204
+    # To specify the configuration of rules.
+    # The configuration of rules is not fully documented by gosec:
+    # https://github.com/securego/gosec#configuration
+    # https://github.com/securego/gosec/blob/569328eade2ccbad4ce2d0f21ee158ab5356a5cf/rules/rulelist.go#L60-L102
+    config:
+      #G306: "0600"
+      #G101:
+      #  pattern: "(?i)example"
+      #  ignore_entropy: false
+      #  entropy_threshold: "80.0"
+      #  per_char_threshold: "3.0"
+      #  truncate: "32"
+
+  govet:
+    # Enable all analyzers.
+    # Default: false
+    enable-all: true
+    # Disable analyzers by name.
+    # Run `go tool vet help` to see all analyzers.
+    # Default: []
+    disable:
+      - fieldalignment
+    # Settings per analyzer.
+    settings:
+      shadow:
+        # Whether to be strict about shadowing; can be noisy.
+        # Default: false
+        strict: true
+
+  inamedparam:
+    # Skips check for interface methods with only a single parameter.
+    # Default: false
+    skip-single-param: true
+
+  lll:
+    # Max line length, lines longer will be reported. Default is 120.
+    # '\t' is counted as 1 character by default, and can be changed with the tab-width option
+    #line-length: 120
+    # Tab width in spaces. Default to 1.
+    #tab-width: 1
+
+  misspell:
+    # Correct spellings using locale preferences for US or UK.
+    # Default is to use a neutral variety of English.
+    # Setting locale to US will correct the British spelling of 'colour' to 'color'.
+    locale: US
+    #ignore-words:
+    #  - someword
+
+  mnd:
+    # List of function patterns to exclude from analysis.
+    # Values always ignored: `time.Date`,
+    # `strconv.FormatInt`, `strconv.FormatUint`, `strconv.FormatFloat`,
+    # `strconv.ParseInt`, `strconv.ParseUint`, `strconv.ParseFloat`.
+    # Default: []
+    ignored-functions:
+      - args.Error
+      - flag.Arg
+      - flag.Duration.*
+      - flag.Float.*
+      - flag.Int.*
+      - flag.Uint.*
+      - os.Chmod
+      - os.Mkdir.*
+      - os.OpenFile
+      - os.WriteFile
+
+  nolintlint:
+    # Exclude following linters from requiring an explanation.
+    # Default: []
+    allow-no-explanation: []
+    # Enable to require an explanation of nonzero length after each nolint directive.
+    # Default: false
+    require-explanation: true
+    # Enable to require nolint directives to mention the specific linter being suppressed.
+    # Default: false
+    require-specific: true
+
+  perfsprint:
+    # Optimizes into strings concatenation.
+    # Default: true
+    strconcat: false
+
+  reassign:
+    # Patterns for global variable names that are checked for reassignment.
+    # See https://github.com/curioswitch/go-reassign#usage
+    # Default: ["EOF", "Err.*"]
+    # patterns:
+    #   - '.*'
+
+  sloglint:
+    # Enforce not using global loggers.
+    # Values:
+    # - "": disabled
+    # - "all": report all global loggers
+    # - "default": report only the default slog logger
+    # https://github.com/go-simpler/sloglint?tab=readme-ov-file#no-global
+    # Default: ""
+    no-global: 'all'
+    # Enforce using methods that accept a context.
+    # Values:
+    # - "": disabled
+    # - "all": report all contextless calls
+    # - "scope": report only if a context exists in the scope of the outermost function
+    # https://github.com/go-simpler/sloglint?tab=readme-ov-file#context-only
+    # Default: ""
+    context: 'scope'
+
+  testpackage:
+    # regexp pattern to skip files
+    #skip-regexp: (export|internal)_test\.go
+
+  unparam:
+    # Inspect exported functions, default is false. Set to true if no external program/library imports your code.
+    # XXX: if you enable this setting, unparam will report a lot of false-positives in text editors:
+    # if it's called for subdir of a project it can't find external interfaces. All text editor integrations
+    # with golangci-lint call it on a directory with the changed file.
+    #check-exported: false
+
+  unused:
+    # Select the Go version to target. The default is '1.13'.
+    go: "1.24"
+
+  whitespace:
+    multi-if: false   # Enforces newlines (or comments) after every multi-line if statement
+    multi-func: false # Enforces newlines (or comments) after every multi-line function signature
+
+  wsl:
+    # See https://github.com/bombsimon/wsl/blob/master/doc/configuration.md for
+    # documentation of available settings. These are the defaults for
+    # `golangci-lint`.
+    allow-assign-and-anything: false
+    allow-assign-and-call: true
+    allow-cuddle-declarations: false
+    allow-multiline-assign: true
+    allow-separated-leading-comment: false
+    allow-trailing-comment: false
+    force-case-trailing-whitespace: 0
+    force-err-cuddling: false
+    force-short-decl-cuddling: false
+    strict-append: true
+
+linters:
+  # please, do not use `enable-all`: it's deprecated and will be removed soon.
+  disable-all: true
+  enable:
+    - asciicheck # checks that your code does not contain non-ASCII identifiers
+    - bodyclose # checks that HTTP response body is closed
+    - copyloopvar # detects places where loop variables are copied https://github.com/karamaru-alpha/copyloopvar
+    - dogsled # finds assignments/declarations with too many blank identifiers
+    - dupl # checks for duplicated code
+    - durationcheck # check for two durations multiplied together
+    - err113 # checks the errors handling expressions
+    - errcheck # checks for unchecked errors in Go code.
+    - errorlint # finds code that will cause problems with the error wrapping scheme introduced in Go 1.13 (case, == and using %v instead of %w)
+    - exhaustive # checks exhaustiveness of enum switch statements
+    - funlen # detects long functions
+    - gochecknoglobals # checks that no global variables exist
+    - gochecknoinits # checks that no init functions are present in Go code
+    - gocognit # calculates the cognitive complexity of functions
+    - goconst # finds repeated strings that could be replaced by a constant
+    - gocritic # provides diagnostics that check for bugs, performance and style issues
+    - gocyclo # calculates cyclomatic complexities of functions
+    - godot # checks if comments end in a period
+    - godox # finds FIXME, TODO, etc. comments
+    - gofmt # checks whether code was gofmt-ed
+    - goimports # check import statements are formatted according to the 'goimport' command
+    - goprintffuncname # checks that printf-like functions are named with f at the end
+    - gosec # inspects source code for security problems
+    - gosimple # linter for Go source code that specializes in simplifying code
+    - govet # examines Go source code and reports suspicious constructs
+    - iface # detects the incorrect use of interfaces https://github.com/uudashr/iface
+    - ineffassign # detects when assignments to existing variables are not used
+    - inamedparam # checks for interface methods with only a single parameter
+    - lll # checks line length
+    - misspell # finds misspelled words
+    - nestif # checks for deeply nested if statements
+    - noctx # finds sending http.Request without context.Context
+    - nolintlint # reports ill-formed, insufficiently specific, or unused nolint directives
+    - perfsprint # optimizes string concatenation
+    - prealloc # finds slice declarations that could potentially be preallocated
+    - protogetter # reports direct reads from proto message fields when getters should be used
+    - reassign # checks that package variables are not reassigned
+    - revive # add extra rules to golint: https://github.com/mgechev/revive?tab=readme-ov-file#golangci-lint
+    - sloglint # checks for global loggers and contextless slog calls
+    - staticcheck # using static analysis, it finds bugs and performance issues, offers simplifications, and enforces style rules
+    - stylecheck # add extra golint style checks: https://pkg.go.dev/honnef.co/go/tools/stylecheck
+    - testifylint # checks for common mistakes when using the testify package
+    - testpackage # checks that test files are in a separate _test package
+    - tparallel # detects inappropriate usage of t.Parallel() method in your Go test codes
+    - unconvert # remove unnecessary type conversions
+    - unparam # finds unused function parameters
+    - unused # checks Go code for unused constants, variables, functions and types
+    - usestdlibvars # checks if the standard library variables can be used
+    - whitespace # checks for unnecessary newlines at the start and end of functions, if, for, etc
+    - wsl # add or remove empty lines
+issues:
+  # Excluding configuration per-path, per-linter, per-text and per-source
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gochecknoglobals
+        - gosec
+        - mnd
+        - funlen
+    # https://github.com/go-critic/go-critic/issues/926
+    - linters:
+        - gocritic
+      text: 'unnecessaryDefer:'
+    - text: 'shadow: declaration of "(err|ctx)" shadows declaration at'
+      linters: [govet]
+  # Disable default exclude rules
+  exclude-use-default: false
+  exclude:
+    # EXC0001 errcheck: Almost all programs ignore errors on these functions and in most cases it's ok
+    - Error return value of .((os\.)?std(out|err)\..*|.*Close|.*Flush|os\.Remove(All)?|.*print(f|ln)?|os\.(Un)?Setenv). is not checked
+    # EXC0004 govet: Common false positives
+    - (possible misuse of unsafe.Pointer|should have signature)
+    # EXC0006 gosec: Too many false-positives on 'unsafe' usage
+    - Use of unsafe calls should be audited
+    # EXC0007 gosec: Too many false-positives for parametrized shell calls
+    - Subprocess launch(ed with variable|ing should be audited)
+    # EXC0008 gosec: Duplicated errcheck checks
+    - (G104|G307)
+    # EXC0009 gosec: Too many issues in popular repos
+    - (Expect directory permissions to be 0750 or less|Expect file permissions to be 0600 or less)
+    # EXC0010 gosec: False positive is triggered by 'src, err := ioutil.ReadFile(filename)'
+    - Potential file inclusion via variable
+    # EXC0011 stylecheck: Annoying issue about not having a comment. The rare codebase has such comments
+    - (comment on exported (method|function|type|const)|should have( a package)? comment|comment should be of the form)
+  exclude-dirs:
+    - .git
+    - .github
+    - docs
+    - mocks

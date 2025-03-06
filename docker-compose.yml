@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: ${GOT_DB_USER}
+      POSTGRES_PASSWORD: ${GOT_DB_PASSWORD}
+      POSTGRES_DB: ${GOT_DB_NAME}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "${GOT_DB_PORT}:${GOT_DB_PORT}"
+    networks:
+      - app-network
+    env_file:
+      - .env
+
+  nats:
+    image: nats:latest
+    ports:
+      - "${GOT_NATS_PORT}:${GOT_NATS_PORT}"
+      - "${GOT_NATS_MONITOR_PORT}:${GOT_NATS_MONITOR_PORT}"
+    networks:
+      - app-network
+    env_file:
+      - .env
+
+  app:
+    container_name: gotemplate
+    build:
+      dockerfile: Dockerfile
+      context: .
+    depends_on:
+      - postgres
+      - nats
+    networks:
+      - app-network
+    ports:
+      - "${GOT_APP_PORT}:${GOT_APP_PORT}"
+    env_file:
+      - .env
+
+volumes:
+  postgres-data:
+
+networks:
+  app-network:
+    driver: bridge
