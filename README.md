@@ -58,5 +58,22 @@ curl -X POST http://localhost:8081/users \
 
 Retrieving user
 ```bash
-curl -X GET http://localhost:8081/users/UUID
+curl -X GET http://localhost:8081/users/{user_id} -H "Content-Type: application/json"
+```
+
+Deleting user
+```bash
+curl -X DELETE http://localhost:8081/users/{user_id} -H "Content-Type: application/json"
+```
+
+Filter users
+```bash
+curl -X GET "http://localhost:8081/users?country=USA&limit=10&offset=0"
+```
+
+Update user
+```bash
+curl -X PUT "http://localhost:8081/users/{user_id}" \
+     -H "Content-Type: application/json" \
+     -d '{"first_name": "UpdatedName", "last_name": "UpdatedLast", "email": "updated.email@example.com", "country": "Canada"}'
 ```

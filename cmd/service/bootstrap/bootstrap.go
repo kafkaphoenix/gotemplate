@@ -80,9 +80,12 @@ func closeDB(db *gorm.DB) error {
 func startHTTPServer(logger zerolog.Logger, userHandler handler.UserHandler) error {
 	router := mux.NewRouter()
 
-	// Define routes
+	// Define user-related routes
 	router.HandleFunc("/users", userHandler.CreateUser).Methods("POST")
 	router.HandleFunc("/users/{id}", userHandler.GetUser).Methods("GET")
+	router.HandleFunc("/users", userHandler.GetUsers).Methods("GET")
+	router.HandleFunc("/users/{id}", userHandler.UpdateUser).Methods("PUT")
+	router.HandleFunc("/users/{id}", userHandler.DeleteUser).Methods("DELETE")
 
 	url := viper.GetString(config.AppURLKey)
 	logger.Info().Msgf("Starting server on %s", url)
