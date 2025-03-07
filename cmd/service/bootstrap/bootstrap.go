@@ -19,7 +19,9 @@ import (
 )
 
 func Run() error {
-	config.Init()
+	err := config.Init("config.yaml"); err != nil {
+		return err
+	}
 
 	initLogger()
 
