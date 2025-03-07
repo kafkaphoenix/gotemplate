@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/kafkaphoenix/gotemplate/internal/domain"
 	"github.com/kafkaphoenix/gotemplate/internal/usecase"
 )
 
@@ -23,21 +24,21 @@ func NewUserHandler(userService usecase.UserService) *UserHandler {
 
 // CreateUser handles the HTTP request to create a new user.
 func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
-    var req domain.User
+	var req domain.User
 
-    // Decode the incoming JSON body
-    err := json.NewDecoder(r.Body).Decode(&req)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusBadRequest)
-        return
-    }
+	// Decode the incoming JSON body
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
-    // Create the user using the usecase
-    err = h.userService.CreateUser(&req)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
+	// Create the user using the usecase
+	err = h.UserService.CreateUser(r.Context(), &req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	// Respond with the created user id
 	w.Header().Set("Content-Type", "application/json")

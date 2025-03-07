@@ -3,7 +3,7 @@ package postgres
 import (
 	"context"
 	"database/sql"
-	"errors"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/kafkaphoenix/gotemplate/internal/domain"
@@ -64,9 +64,9 @@ func (r *userRepository) GetUserByID(ctx context.Context, userID uuid.UUID) (*do
 
 	err := row.Scan(&user.ID, &user.FirstName, &user.LastName, &user.Nickname, &user.Password, &user.Email,
 		&user.Country, &user.CreatedAt, &user.UpdatedAt)
-		if err != nil {
-			return nil, errors.Wrap(err, "failed to get user by ID")
-		}
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user by ID %w", err)
+	}
 
 	return &user, nil
 }
