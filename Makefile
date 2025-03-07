@@ -32,9 +32,17 @@ server: ## Build and Run the Docker server
 logs: ## Show the Docker logs
 	docker-compose logs -f
 
+.PHONY: local-cli
+local-cli: ## Build the local CLI binary
+ifeq ($(OS),Windows_NT)
+	go build -o cli.exe ./cmd/cli
+else
+	go build -o cli ./cmd/cli
+endif
+
 .PHONY: cli
 cli: ## Run the Docker CLI
-	docker-compose up -it --rm app /app/cli $(ARGS)
+	docker up -it --rm app /app/cli $(ARGS)
 
 .PHONY: attach
 attach: ## Attach to the Docker container

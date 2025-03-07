@@ -16,13 +16,12 @@ func NewCmd(logger *zerolog.Logger) *cobra.Command {
 	}
 
 	cmd.AddCommand(
-	// NewCreateCmd(),
+		NewCreateCmd(logger),
+		NewGetCmd(logger),
 	// NewUpdateCmd(),
 	// NewDeleteCmd(),
 	// NewListCmd(),
 	)
-
-	logger.Info().Msg("User command initialized")
 
 	return cmd
 }
