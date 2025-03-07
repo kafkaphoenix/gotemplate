@@ -12,6 +12,29 @@ This project is designed following the **Clean Architecture** pattern, ensuring 
 - **Cobra**: CLI framework for command-line interactions.
 - **Testify**: Used for unit testing.
 
+## Compatibility matrix
+
+### app: 1.0.0
+
+| Driver ↓ / Postgress → | 13 | 14 | 15 | 16 | 17 |
+|:--------------------:|:---:|:---:|:---:|:---:|:---:|
+| 1.10.9               | ✅  | ✅  | ✅  | ✅  | ✅  |
+
+| Driver ↓ / NATS → | 2.3 | 2.4 | 2.5 | 2.6 | 2.7 | 2.8 | 2.9 | 2.10 |
+|:--------------------:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 1.23.5               | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | ✅  | 🟠  |
+
+* 2.10 is a breaking change in nats https://docs.nats.io/release-notes/whats_new/whats_new_210
+
+### Legend
+
+| Symbol | Description |
+|:------:|-------------|
+| ✅     | Perfect match: all features are supported. Client and server versions have exactly the same features/APIs. |
+| 🟠     | Forward compatibility: the client will work with the server, but not all new server features are supported. The server has features that the client library cannot use. |
+| ❌     | Backward compatibility/Not applicable: the client has features that may not be present in the server. Common features will work, but some client APIs might not be available in the server. |
+| -      | Not tested: this combination has not been verified or is not applicable. |
+
 ## Requirements
 To run this project, please follow the steps listed below:
 
