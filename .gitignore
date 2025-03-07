@@ -1,6 +1,9 @@
 .vscode/*
 TODO.md
 
+# Docker
+.docker
+
 # GO
 # ref: https://github.com/github/gitignore/blob/main/Go.gitignore
 

@@ -19,7 +19,7 @@ func TestInit_OK(t *testing.T) {
 	require.NoError(t, err)
 
 	// WHEN
-	config.Init("../../../config.yml")
+	config.Init()
 
 	// THEN
 	assert.Equal(t, "5432", viper.GetString("DB_PORT"))

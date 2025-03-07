@@ -21,11 +21,12 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
 }
 
-// BeforeCreate hook to generate UUID before creating the user
-func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
+// BeforeCreate hook to generate UUID before creating the user.
+func (u *User) BeforeCreate(_ *gorm.DB) (err error) {
 	if u.ID == uuid.Nil { // Check if the ID is empty
 		u.ID = uuid.New() // Generate a new UUID
 	}
+
 	return nil
 }
 

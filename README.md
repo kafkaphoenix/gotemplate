@@ -1,15 +1,13 @@
 # GoTemplate
 
 ## Description
-GoTemplate is a Golang project template with a PostgreSQL database. It includes a command-line tool (CLI) and a gRPC server for managing user operations. The project follows a hexagonal architecture and utilizes NATS for notifications.
+GoTemplate is a Golang project template with a PostgreSQL database. It includes a HTTP api for user operations. The project follows a clean architecture and utilizes NATS for notifications.
 
 ## Architecture
-This project is designed following the **Clean Architecture** pattern, ensuring a decoupled, maintainable, and testable codebase. Clean Architecture organizes the application into distinct layers, each with explicit dependencies pointing inwards. This structure ensures that the core business logic remains independent of external systems, such as databases, frameworks, or user interfaces.
+This project is designed following the **Clean Architecture** pattern, ensuring a decoupled, maintainable, and testable codebase. **Clean Architecture** organizes the application into distinct layers, each with explicit dependencies pointing inwards. This structure ensures that the core business logic remains independent of external systems, such as databases, frameworks, or user interfaces.
 
 - **PostgreSQL**: Used as the primary database.
 - **NATS**: Used for asynchronous messaging and notifications.
-- **gRPC**: Supports efficient inter-service communication.
-- **Cobra**: CLI framework for command-line interactions.
 - **Testify**: Used for unit testing.
 
 ## Compatibility matrix
@@ -91,19 +89,17 @@ This project includes the following key dependencies:
 ## Usage
 GoTemplate provides a **Makefile** for easy management. Commonly used commands include:
 
-### Build and Run
+### Build and run
 ```sh
 make build   # Build Docker image
-make server  # Run the backend service in Docker
-make cli     # Run CLI inside the container
+make server  # Build & Start the server
 ```
 
-### Lint, Test and generators
+### Lint, test and generators
 ```sh
 make lint   # Run Golangci-Lint, Goimports and Gofmt
 make test   # Run unit and integration tests
 make mocks  # Generate mock implementations
-make proto  # Generate gRPC code
 ```
 
 ## API Endpoints
@@ -126,23 +122,23 @@ curl -X GET http://localhost:8081/users/{user_id} \
     -H "Content-Type: application/json"
 ```
 
-### **3. Delete a User**
+### **3. Remove a User**
 ```sh
 curl -X DELETE http://localhost:8081/users/{user_id} \
     -H "Content-Type: application/json"
 ```
 
-### **4. Get Users List (with filters)**
+### **4. Get paginated Users list (with filters)**
 ```sh
 curl -X GET "http://localhost:8081/users?country=USA&limit=10&offset=0 \
     -H "Content-Type: application/json"
 ```
 
-### **5. Update User Information**
+### **5. Modify an existing User**
 ```sh
-curl -X PUT "http://localhost:8081/users/{user_id}" \
+curl -X PATCH "http://localhost:8081/users/{user_id}" \
      -H "Content-Type: application/json" \
-     -d '{"first_name": "UpdatedName", "last_name": "UpdatedLast", "email": "updated.email@example.com", "country": "Canada"}'
+     -d '{"country": "USA"}'
 ```
 
 ## Running in Docker
@@ -155,32 +151,22 @@ This starts the following services:
 - NATS (message broker)
 - GoTemplate (application server)
 
-### **Stopping Services**
+### **Purge Services**
 ```sh
 make purge
 ```
-This stops and removes all running services (includind containers, volumes, images and networks).
+This stops and removes all running services (including containers, volumes, images and unused networks).
 
-### **Accessing the app container**
+### **Accessing the container**
 ```sh
 make attach
 ```
 
-### Logging
+### Logs
 To view logs, use the following command:
 ```sh
 make logs
 ```
-
-### Command Line Interface (CLI)
-The CLI is used for managing user operations. To run the CLI, use the following command:
-```sh
-make local-cli
-```
-
-#### CLI Commands
-- **Create User**: `./cli user create --first-name "Alice" --last-name "Bob" --nickname "AB123" --email "alice@bob.com" --country "UK"`
-- **Get User**: `./cli user get --id {user_id}`
 
 ## Contributing
 To contribute:
@@ -193,4 +179,3 @@ To contribute:
 
 ## License
 This project is licensed under the MIT License. See `LICENSE` for details.
-

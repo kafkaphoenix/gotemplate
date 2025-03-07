@@ -1,0 +1,32 @@
+meta {
+  name: Update
+  type: http
+  seq: 5
+}
+
+patch {
+  url: http://localhost:8081/users/:user_id?Country=USA
+  body: json
+  auth: none
+}
+
+params:query {
+  Country: USA
+}
+
+params:path {
+  user_id: e805d3d0-f536-49ee-9acf-7528d7930fc1
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "first_name": "UpdatedName",
+    "last_name": "UpdatedLast",
+    "email": "updated.email@example.com",
+    "country": "Canada"
+  }
+}

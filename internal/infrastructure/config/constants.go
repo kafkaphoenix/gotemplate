@@ -1,8 +1,6 @@
 package config
 
 const (
-	EnvPrefix = "GOT"
-
 	DBEndpointKey = "postgres.endpoint"
 
 	NatsPortKey        = "nats.port"

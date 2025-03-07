@@ -1,5 +1,4 @@
-# golang:1.24.1-alpine3.21
-FROM golang@sha256:c3c72c53c324f5c4b48b3918bf98351b0003216710717233d5a7aae539441e48 AS builder
+FROM golang:1.24.1-alpine3.21 AS builder
 
 # environment variables
 ENV CGO_ENABLED=0 \
@@ -20,11 +19,9 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 # -ldflags optimize binary size
 # -trimpath remove absolute path from binary
 RUN go build -ldflags="-s -w -extldflags '-static'" -trimpath -o service ./cmd/service/main.go
-RUN go build -ldflags="-s -w -extldflags '-static'" -trimpath -o cli ./cmd/cli/main.go
 
 # final image
-# alpine:3.21
-FROM alpine@sha256:a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88c
+FROM alpine:3.21
 
 LABEL maintainer="Javier Aguilera"
 
@@ -48,7 +45,6 @@ WORKDIR /app
 
 # copy binaries and config files
 COPY --from=builder --chown=${UID}:${GID} /app/service .
-COPY --from=builder --chown=${UID}:${GID} /app/cli .
 COPY --chown=${UID}:${GID} config.yml .
 
 # drop root privileges

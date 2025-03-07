@@ -1,0 +1,19 @@
+meta {
+  name: Delete
+  type: http
+  seq: 3
+}
+
+delete {
+  url: http://localhost:8081/users/:user_id
+  body: none
+  auth: none
+}
+
+params:path {
+  user_id: e805d3d0-f536-49ee-9acf-7528d7930fc1
+}
+
+headers {
+  Content-Type: application/json
+}

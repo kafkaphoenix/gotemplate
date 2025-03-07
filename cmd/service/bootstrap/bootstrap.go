@@ -19,9 +19,7 @@ import (
 )
 
 func Run() error {
-	if err := config.Init("config.yaml"); err != nil {
-		return err
-	}
+	config.Init()
 
 	initLogger()
 
@@ -84,7 +82,7 @@ func startHTTPServer(logger zerolog.Logger, userHandler handler.UserHandler) err
 	router.HandleFunc("/users", userHandler.CreateUser).Methods("POST")
 	router.HandleFunc("/users/{id}", userHandler.GetUser).Methods("GET")
 	router.HandleFunc("/users", userHandler.GetUsers).Methods("GET")
-	router.HandleFunc("/users/{id}", userHandler.UpdateUser).Methods("PUT")
+	router.HandleFunc("/users/{id}", userHandler.UpdateUser).Methods("PATCH")
 	router.HandleFunc("/users/{id}", userHandler.DeleteUser).Methods("DELETE")
 
 	url := viper.GetString(config.AppURLKey)
