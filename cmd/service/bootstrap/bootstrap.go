@@ -28,6 +28,7 @@ func Run() error {
 	if err != nil {
 		return err
 	}
+	defer db.Close()
 
 	userRepo := postgres.NewUserRepository(db)
 	userService := usecase.NewUserService(userRepo)
@@ -51,7 +52,6 @@ func initDB() (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer db.Close()
 
 	return db, nil
 }
@@ -63,11 +63,11 @@ func startHTTPServer(logger zerolog.Logger, userHandler handler.UserHandler) err
 	router.HandleFunc("/users", userHandler.CreateUser).Methods("POST")
 	router.HandleFunc("/users/{id}", userHandler.GetUser).Methods("GET")
 
-	port := viper.GetString(config.AppURLKey)
-	logger.Debug().Msgf("Starting server on port %s", port)
+	url := viper.GetString(config.AppURLKey)
+	logger.Info().Msgf("Starting server on %s", url)
 
 	s := &http.Server{
-		Addr:              port,
+		Addr:              url,
 		Handler:           router,
 		ReadHeaderTimeout: 3 * time.Second,
 	}

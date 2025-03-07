@@ -39,3 +39,24 @@ This project comes with a makefile to ease the usage of it. It cover a wide rang
 - run-docker-service
 - run-docker-cli
 - attach-docker
+
+## Test
+
+Creating user
+```bash
+curl -X POST http://localhost:8081/users \
+    -H "Content-Type: application/json" \
+    -d '{
+        "first_name": "Alice",
+        "last_name": "Bob",
+        "nickname": "AB123",
+        "email": "alice@bob.com",
+        "country": "UK"
+    }'
+```
+
+
+Retrieving user
+```bash
+curl -X GET http://localhost:8081/users/UUID
+```

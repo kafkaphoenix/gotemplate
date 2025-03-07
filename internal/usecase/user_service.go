@@ -33,29 +33,13 @@ func NewUserService(repo domain.UserRepository) UserService {
 	return &userService{repo: repo}
 }
 
-// CreateUser handles the creation of a new user.
-func (s *userService) CreateUser(ctx context.Context, params CreateUserParams) (*domain.User, error) {
-	userID := uuid.New()
-	now := time.Now()
+// CreateUser creates a new user in the system
+func (s *userService) CreateUser(user *domain.User) error {
+    // Generate a new UUID for the user
+    user.ID = uuid.New().String()
 
-	user := &domain.User{
-		ID:        userID.String(),
-		FirstName: params.FirstName,
-		LastName:  params.LastName,
-		Nickname:  params.Nickname,
-		Password:  params.Password, // In a real-world app, you would hash the password
-		Email:     params.Email,
-		Country:   params.Country,
-		CreatedAt: now,
-		UpdatedAt: now,
-	}
-
-	err := s.repo.CreateUser(ctx, user)
-	if err != nil {
-		return nil, err
-	}
-
-	return user, nil
+    // Call the repository layer to save the user
+    return s.userRepo.CreateUser(user)
 }
 
 // GetUserByID retrieves a user by ID.

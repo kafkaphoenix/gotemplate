@@ -20,18 +20,27 @@ mocks: ## Generates mocks
 proto: ## Generates proto files
 	protoc -I=./proto --go_out=proto --go_opt=paths=source_relative --go-grpc_out=./proto --go-grpc_opt=paths=source_relative proto/user.proto
 
-.PHONY: build-docker
-build-docker: ## Build the Docker image
+.PHONY: build
+build: ## Build the Docker image
 	docker build -t app -f Dockerfile .
 
-.PHONY: run-docker-service
-run-docker-service: ## Run the Docker service
-	docker run -it --rm app /app/service
+.PHONY: server
+server: ## Run the Docker server
+	docker-compose up -d app
 
-.PHONY: run-docker-cli
-run-docker-cli: ## Run the Docker CLI
-	docker run -it --rm app /app/cli $(ARGS)
+.PHONY: logs
+logs: ## Show the Docker logs
+	docker-compose logs -f
 
-.PHONY: attach-docker
-attach-docker: ## Attach to the Docker container
-	docker run -it --rm --entrypoint /bin/sh app
+.PHONY: cli
+cli: ## Run the Docker CLI
+	docker-compose up -it --rm app /app/cli $(ARGS)
+
+.PHONY: attach
+attach: ## Attach to the Docker container
+	docker-compose run -it --rm --entrypoint /bin/sh app
+
+.PHONY: purge
+purge: ## Purge all Docker containers and images
+	docker rm -f `docker ps -a -q` || true
+	docker rmi -f `docker images -q` || true

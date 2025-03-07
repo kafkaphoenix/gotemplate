@@ -10,8 +10,6 @@ import (
 	_ "github.com/lib/pq" // PostgreSQL driver
 )
 
-var ErrNotFound = errors.New("user not found")
-
 // userRepository implements the UserRepository interface using PostgreSQL.
 type userRepository struct {
 	db *sql.DB
@@ -19,17 +17,23 @@ type userRepository struct {
 
 // NewUserRepository creates a new instance of userRepository.
 func NewUserRepository(db *sql.DB) domain.UserRepository {
-	return &userRepository{db: db}
+	return &userRepository{
+		db: db,
+	}
 }
 
 // CreateUser inserts a new user into the PostgreSQL database.
 func (r *userRepository) CreateUser(ctx context.Context, user *domain.User) error {
 	query := `INSERT INTO users (id, first_name, last_name, nickname, password, email, country, created_at, updated_at) 
 			  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
+
 	_, err := r.db.ExecContext(ctx, query, user.ID, user.FirstName, user.LastName, user.Nickname, user.Password,
 		user.Email, user.Country, user.CreatedAt, user.UpdatedAt)
+	if err != nil {
+		return fmt.Errorf("failed to insert user %w", err)
+	}
 
-	return err
+	return nil
 }
 
 // UpdateUser updates an existing user in the database.
@@ -60,13 +64,9 @@ func (r *userRepository) GetUserByID(ctx context.Context, userID uuid.UUID) (*do
 
 	err := row.Scan(&user.ID, &user.FirstName, &user.LastName, &user.Nickname, &user.Password, &user.Email,
 		&user.Country, &user.CreatedAt, &user.UpdatedAt)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, ErrNotFound
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get user by ID")
 		}
-
-		return nil, err
-	}
 
 	return &user, nil
 }

@@ -1,8 +1,8 @@
 app:
-  url: ":8081"
+  url: "0.0.0.0:8081"
 postgres:
   endpoint: "postgres://user:password@localhost:5432/postgresdb?sslmode=disable"
-  name: "postgresdb"
+  name: "postgres"
 nats:
   port: "4222"
   monitorPort: "8222"

@@ -53,3 +53,5 @@ COPY --chown=${UID}:${GID} config.yml .
 
 # drop root privileges
 USER ${USER}
+
+CMD ["./service"]

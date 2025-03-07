@@ -23,45 +23,26 @@ func NewUserHandler(userService usecase.UserService) *UserHandler {
 
 // CreateUser handles the HTTP request to create a new user.
 func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
-	var userRequest struct {
-		FirstName string `json:"first_name"`
-		LastName  string `json:"last_name"`
-		Nickname  string `json:"nickname"`
-		Password  string `json:"password"`
-		Email     string `json:"email"`
-		Country   string `json:"country"`
-	}
+    var req domain.User
 
-	// Decode the request body into the user request struct
-	if err := json.NewDecoder(r.Body).Decode(&userRequest); err != nil {
-		http.Error(w, "Invalid request", http.StatusBadRequest)
-		return
-	}
+    // Decode the incoming JSON body
+    err := json.NewDecoder(r.Body).Decode(&req)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
+        return
+    }
 
-	userParams := usecase.CreateUserParams{
-		FirstName: userRequest.FirstName,
-		LastName:  userRequest.LastName,
-		Nickname:  userRequest.Nickname,
-		Password:  userRequest.Password,
-		Email:     userRequest.Email,
-		Country:   userRequest.Country,
-	}
+    // Create the user using the usecase
+    err = h.userService.CreateUser(&req)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
 
-	// Call the usecase to create the user
-	user, err := h.UserService.CreateUser(r.Context(), userParams)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	// Respond with the created user data
+	// Respond with the created user id
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-
-	if err := json.NewEncoder(w).Encode(user); err != nil {
-		http.Error(w, "Error encoding response", http.StatusInternalServerError)
-		return
-	}
+	json.NewEncoder(w).Encode(map[string]string{"id": req.ID})
 }
 
 // GetUser handles the HTTP request to get a user by ID.
