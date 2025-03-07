@@ -1,18 +1,19 @@
 package bootstrap
 
 import (
-	"database/sql"
 	"net/http"
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/kafkaphoenix/gotemplate/internal/domain"
 	"github.com/kafkaphoenix/gotemplate/internal/infrastructure/config"
 	"github.com/spf13/viper"
+	pg "gorm.io/driver/postgres"
+	"gorm.io/gorm"
 
 	handler "github.com/kafkaphoenix/gotemplate/internal/handler/http"
 	"github.com/kafkaphoenix/gotemplate/internal/infrastructure/postgres"
 	"github.com/kafkaphoenix/gotemplate/internal/usecase"
-	_ "github.com/lib/pq" // PostgreSQL driver
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -28,7 +29,12 @@ func Run() error {
 	if err != nil {
 		return err
 	}
-	defer db.Close()
+
+	defer func() {
+		if err := closeDB(db); err != nil {
+			log.Error().Err(err).Msg("Error closing the database connection")
+		}
+	}()
 
 	userRepo := postgres.NewUserRepository(db)
 	userService := usecase.NewUserService(userRepo)
@@ -42,25 +48,33 @@ func initLogger() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 }
 
-// initDB connects to the PostgreSQL database and runs migrations
+// initDB connects to the PostgreSQL database and runs migrations.
 func initDB() (*gorm.DB, error) {
-    dbEndpoint := viper.GetString(config.DBEndpointKey)
-    dbName := viper.GetString(config.DBNameKey)
-    dsn := "user=" + dbEndpoint + " dbname=" + dbName + " sslmode=disable"
+	dbEndpoint := viper.GetString(config.DBEndpointKey)
 
-    // Connect to the database using GORM
-    db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-    if err != nil {
-        return nil, err
-    }
+	// Connect to the database using GORM.
+	db, err := gorm.Open(pg.Open(dbEndpoint), &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
 
-    // Run auto migration to create the `users` table if it doesn't exist
-    err = db.AutoMigrate(&domain.User{})
-    if err != nil {
-        return nil, err
-    }
+	// Run auto migration to create the `users` table if it doesn't exist.
+	err = db.AutoMigrate(&domain.User{})
+	if err != nil {
+		return nil, err
+	}
 
-    return db, nil
+	return db, nil
+}
+
+func closeDB(db *gorm.DB) error {
+	sqlDB, err := db.DB()
+	if err != nil {
+		return err
+	}
+
+	// Gracefully close the underlying sql.DB connection.
+	return sqlDB.Close()
 }
 
 func startHTTPServer(logger zerolog.Logger, userHandler handler.UserHandler) error {

@@ -23,5 +23,5 @@ func TestInit_OK(t *testing.T) {
 
 	// THEN
 	assert.Equal(t, "5432", viper.GetString("DB_PORT"))
-	assert.Equal(t, "postgresdb", viper.GetString(config.DBNameKey))
+	assert.Equal(t, "0.0.0.0:8081", viper.GetString(config.AppURLKey))
 }

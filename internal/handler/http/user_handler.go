@@ -2,14 +2,13 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
-	"strings"
+	"strconv"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/kafkaphoenix/gotemplate/internal/domain"
 	"github.com/kafkaphoenix/gotemplate/internal/usecase"
-	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 )
 
@@ -34,6 +33,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		h.logger.Error().Err(err).Msg("Failed to decode request body")
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
+
 		return
 	}
 
@@ -41,6 +41,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	if user.FirstName == "" || user.LastName == "" || user.Nickname == "" || user.Email == "" || user.Country == "" {
 		h.logger.Warn().Msg("Missing required fields")
 		http.Error(w, "Missing required fields", http.StatusBadRequest)
+
 		return
 	}
 
@@ -48,22 +49,29 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	if err := h.userService.CreateUser(r.Context(), &user); err != nil {
 		h.logger.Error().Err(err).Msg("Failed to create user")
 		http.Error(w, "Failed to create user", http.StatusInternalServerError)
+
 		return
 	}
 
 	// Return a success response with the created user data.
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(user)
+
+	if err := json.NewEncoder(w).Encode(user); err != nil {
+		h.logger.Error().Err(err).Msg("Failed to encode response")
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
 }
 
 // GetUser handles retrieving a user by ID.
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	// Parse the user ID from the URL.
 	vars := mux.Vars(r)
+
 	userID, err := uuid.Parse(vars["id"])
 	if err != nil {
 		h.logger.Error().Err(err).Msg("Invalid user ID")
 		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+
 		return
 	}
 
@@ -72,12 +80,17 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.logger.Error().Err(err).Msg("User not found")
 		http.Error(w, "User not found", http.StatusNotFound)
+
 		return
 	}
 
 	// Return the user data.
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
+
+	if err = json.NewEncoder(w).Encode(user); err != nil {
+		h.logger.Error().Err(err).Msg("Failed to encode response")
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
 }
 
 // GetUsers handles retrieving users, possibly with filtering by country and pagination.
@@ -87,6 +100,7 @@ func (h *UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	if country == "" {
 		country = "all" // Default to fetching all countries if not specified
 	}
+
 	limit := r.URL.Query().Get("limit")
 	offset := r.URL.Query().Get("offset")
 
@@ -112,21 +126,28 @@ func (h *UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		h.logger.Error().Err(err).Msg("Failed to fetch users")
 		http.Error(w, "Failed to fetch users", http.StatusInternalServerError)
+
 		return
 	}
 
 	// Return the users list.
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(users)
+
+	if err = json.NewEncoder(w).Encode(users); err != nil {
+		h.logger.Error().Err(err).Msg("Failed to encode response")
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
 }
 
 // UpdateUser handles updating an existing user.
 func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+
 	userID, err := uuid.Parse(vars["id"])
 	if err != nil {
 		h.logger.Error().Err(err).Msg("Invalid user ID")
 		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+
 		return
 	}
 
@@ -135,6 +156,7 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		h.logger.Error().Err(err).Msg("Failed to decode request body")
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
+
 		return
 	}
 
@@ -145,21 +167,28 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	if err := h.userService.UpdateUser(r.Context(), &user); err != nil {
 		h.logger.Error().Err(err).Msg("Failed to update user")
 		http.Error(w, "Failed to update user", http.StatusInternalServerError)
+
 		return
 	}
 
 	// Return the updated user data.
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(user)
+
+	if err := json.NewEncoder(w).Encode(user); err != nil {
+		h.logger.Error().Err(err).Msg("Failed to encode response")
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+	}
 }
 
 // DeleteUser handles deleting a user by ID.
 func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
+
 	userID, err := uuid.Parse(vars["id"])
 	if err != nil {
 		h.logger.Error().Err(err).Msg("Invalid user ID")
 		http.Error(w, "Invalid user ID", http.StatusBadRequest)
+
 		return
 	}
 
@@ -167,6 +196,7 @@ func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	if err := h.userService.DeleteUser(r.Context(), userID); err != nil {
 		h.logger.Error().Err(err).Msg("Failed to delete user")
 		http.Error(w, "Failed to delete user", http.StatusInternalServerError)
+
 		return
 	}
 
@@ -175,7 +205,10 @@ func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 }
 
 // HealthCheck is used to confirm the API is working.
-func (h *UserHandler) HealthCheck(w http.ResponseWriter, r *http.Request) {
+func (h *UserHandler) HealthCheck(w http.ResponseWriter, _ *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("OK"))
+
+	if _, err := w.Write([]byte("OK")); err != nil {
+		h.logger.Error().Err(err).Msg("Failed to write response")
+	}
 }

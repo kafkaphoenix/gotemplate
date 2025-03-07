@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+
 	"github.com/google/uuid"
 	"github.com/kafkaphoenix/gotemplate/internal/domain"
 	"gorm.io/gorm"
@@ -41,6 +42,7 @@ func (r *UserRepository) GetUserByID(ctx context.Context, userID uuid.UUID) (*do
 	if err := r.db.WithContext(ctx).First(&user, "id = ?", userID).Error; err != nil {
 		return nil, err
 	}
+
 	return &user, nil
 }
 
@@ -56,5 +58,6 @@ func (r *UserRepository) GetUsers(ctx context.Context, country string, limit, of
 	if err != nil {
 		return nil, err
 	}
+
 	return users, nil
 }
