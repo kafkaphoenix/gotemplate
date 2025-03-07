@@ -25,6 +25,6 @@ func Init(configFilePath string) error {
 	}
 
 	viper.AutomaticEnv()
-	
+
 	return nil
 }

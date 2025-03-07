@@ -39,5 +39,3 @@ This project comes with a makefile to ease the usage of it. It cover a wide rang
 - run-docker-service
 - run-docker-cli
 - attach-docker
-
-
