@@ -2,8 +2,9 @@ package usecase
 
 import (
 	"context"
-	"github.com/kafkaphoenix/gotemplate/internal/domain"
+
 	"github.com/google/uuid"
+	"github.com/kafkaphoenix/gotemplate/internal/domain"
 )
 
 type UserService interface {
