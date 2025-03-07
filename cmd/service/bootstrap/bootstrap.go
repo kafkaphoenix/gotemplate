@@ -2,7 +2,6 @@ package bootstrap
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -19,7 +18,7 @@ import (
 )
 
 func Run() error {
-	err := config.Init("config.yaml"); err != nil {
+	if err := config.Init("config.yaml"); err != nil {
 		return err
 	}
 
@@ -45,15 +44,10 @@ func initLogger() {
 func initDB() (*sql.DB, error) {
 	var err error
 
-	dbUser := viper.GetString(config.DBUserKey)
-	dbPassword := viper.GetString(config.DBPasswordKey)
-	dbPort := viper.GetString(config.DBPortKey)
+	dbEndpoint := viper.GetString(config.DBEndpointKey)
 	dbName := viper.GetString(config.DBNameKey)
-	sslMode := viper.GetString(config.DBSSLModeKey)
 
-	connStr := fmt.Sprintf("postgres://%s:%s@postgres:%s/%s?sslmode=%s", dbUser, dbPassword, dbPort, dbName, sslMode)
-
-	db, err := sql.Open(dbName, connStr)
+	db, err := sql.Open(dbName, dbEndpoint)
 	if err != nil {
 		return nil, err
 	}
@@ -69,11 +63,11 @@ func startHTTPServer(logger zerolog.Logger, userHandler handler.UserHandler) err
 	router.HandleFunc("/users", userHandler.CreateUser).Methods("POST")
 	router.HandleFunc("/users/{id}", userHandler.GetUser).Methods("GET")
 
-	port := viper.GetString(config.AppPortKey)
+	port := viper.GetString(config.AppURLKey)
 	logger.Debug().Msgf("Starting server on port %s", port)
 
 	s := &http.Server{
-		Addr:              fmt.Sprintf(":%s", port),
+		Addr:              port,
 		Handler:           router,
 		ReadHeaderTimeout: 3 * time.Second,
 	}

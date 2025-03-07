@@ -1,7 +1,7 @@
 package config
 
 const (
-	EnvPrefix     = "GOT"
+	EnvPrefix = "GOT"
 
 	DBEndpointKey = "postgres.endpoint"
 	DBNameKey     = "postgres.name"
@@ -9,5 +9,5 @@ const (
 	NatsPortKey        = "nats.port"
 	NatsMonitorPortKey = "nats.monitorPort"
 
-	AppPortKey = "app.url"
+	AppURLKey = "app.url"
 )

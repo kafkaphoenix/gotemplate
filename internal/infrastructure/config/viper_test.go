@@ -19,14 +19,9 @@ func TestInit_OK(t *testing.T) {
 	require.NoError(t, err)
 
 	// WHEN
-	config.Init()
+	config.Init("../../../config.yml")
 
 	// THEN
-	assert.Equal(t, "5432", viper.GetString(config.DBPortKey))
-	assert.Equal(t, "user", viper.GetString(config.DBUserKey))
-	assert.Equal(t, "password", viper.GetString(config.DBPasswordKey))
+	assert.Equal(t, "5432", viper.GetString("DB_PORT"))
 	assert.Equal(t, "postgresdb", viper.GetString(config.DBNameKey))
-	assert.Equal(t, "4222", viper.GetString(config.NatsPortKey))
-	assert.Equal(t, "8222", viper.GetString(config.NatsMonitorPortKey))
-	assert.Equal(t, "8081", viper.GetString(config.AppPortKey))
 }

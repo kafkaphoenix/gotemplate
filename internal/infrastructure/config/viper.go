@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/kafkaphoenix/gotemplate/internal/infrastructure/config"
 	"github.com/spf13/viper"
 )
 
@@ -24,6 +23,7 @@ func Init(configFilePath string) error {
 		return fmt.Errorf("failed to read config file: %w", err)
 	}
 
+	viper.SetEnvPrefix(EnvPrefix)
 	viper.AutomaticEnv()
 
 	return nil
