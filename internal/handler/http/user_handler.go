@@ -161,7 +161,7 @@ func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Set the ID of the user to update
-	user.ID = userID.String()
+	user.ID = userID
 
 	// Call the service layer to update the user.
 	if err := h.userService.UpdateUser(r.Context(), &user); err != nil {

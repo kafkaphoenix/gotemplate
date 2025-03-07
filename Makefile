@@ -44,3 +44,5 @@ attach: ## Attach to the Docker container
 purge: ## Purge all Docker containers and images
 	docker rm -f `docker ps -a -q` || true
 	docker rmi -f `docker images -q` || true
+	docker volume prune -f
+	docker network prune -f

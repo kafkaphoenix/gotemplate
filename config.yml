@@ -1,7 +1,7 @@
 app:
   url: "0.0.0.0:8081"
 postgres:
-  endpoint: "postgres://user:password@postgres:5432/postgresdb?sslmode=disable"
+  endpoint: "postgres://user:password@postgres:5432/postgres?sslmode=disable"
 nats:
   port: "4222"
   monitorPort: "8222"
