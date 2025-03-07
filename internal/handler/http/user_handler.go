@@ -48,6 +48,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	// Respond with the created user data
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
+
 	if err := json.NewEncoder(w).Encode(user); err != nil {
 		http.Error(w, "Error encoding response", http.StatusInternalServerError)
 		return
@@ -57,6 +58,7 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 // GetUser handles the HTTP request to get a user by ID.
 func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
+
 	userID, err := uuid.Parse(params["id"])
 	if err != nil {
 		http.Error(w, "Invalid user ID", http.StatusBadRequest)
@@ -73,6 +75,7 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	// Respond with the user data
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
+
 	if err := json.NewEncoder(w).Encode(user); err != nil {
 		http.Error(w, "Error encoding response", http.StatusInternalServerError)
 		return

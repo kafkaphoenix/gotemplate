@@ -8,6 +8,6 @@ import (
 
 func main() {
 	if err := bootstrap.Run(); err != nil {
-		log.Fatalf("Error starting service: %w", err)
+		log.Fatal(err)
 	}
 }

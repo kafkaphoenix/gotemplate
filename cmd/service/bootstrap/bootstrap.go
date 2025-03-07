@@ -41,11 +41,12 @@ func initLogger() {
 
 func initDB() (*sql.DB, error) {
 	var err error
-	dbUser := viper.GetString(config.DbUserKey)
-	dbPassword := viper.GetString(config.DbPasswordKey)
-	dbPort := viper.GetString(config.DbPortKey)
-	dbName := viper.GetString(config.DbNameKey)
-	sslMode := viper.GetString(config.DbSSLModeKey)
+
+	dbUser := viper.GetString(config.DBUserKey)
+	dbPassword := viper.GetString(config.DBPasswordKey)
+	dbPort := viper.GetString(config.DBPortKey)
+	dbName := viper.GetString(config.DBNameKey)
+	sslMode := viper.GetString(config.DBSSLModeKey)
 
 	connStr := fmt.Sprintf("postgres://%s:%s@postgres:%s/%s?sslmode=%s", dbUser, dbPassword, dbPort, dbName, sslMode)
 
@@ -58,7 +59,7 @@ func initDB() (*sql.DB, error) {
 	return db, nil
 }
 
-func startHTTPServer(logger zerolog.Logger, userHandler handler.UserHandler) error {
+func initHTTPServer(logger zerolog.Logger, userHandler handler.UserHandler) error {
 	router := mux.NewRouter()
 
 	// Define routes
@@ -67,5 +68,12 @@ func startHTTPServer(logger zerolog.Logger, userHandler handler.UserHandler) err
 
 	port := viper.GetString(config.AppPortKey)
 	logger.Debug().Msgf("Starting server on port %s", port)
-	return http.ListenAndServe(fmt.Sprintf(":%s", port), router)
+
+	s := &http.Server{
+		Addr:              fmt.Sprintf(":%s", port),
+		Handler:           router,
+		ReadHeaderTimeout: 3 * time.Second,
+	}
+
+	return s.ListenAndServe() 
 }
