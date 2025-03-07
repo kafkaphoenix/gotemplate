@@ -27,7 +27,7 @@ func (r *userRepository) CreateUser(ctx context.Context, user *domain.User) erro
 	query := `INSERT INTO users (id, first_name, last_name, nickname, password, email, country, created_at, updated_at) 
 			  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`
 	_, err := r.db.ExecContext(ctx, query, user.ID, user.FirstName, user.LastName, user.Nickname, user.Password,
-		 user.Email, user.Country, user.CreatedAt, user.UpdatedAt)
+		user.Email, user.Country, user.CreatedAt, user.UpdatedAt)
 
 	return err
 }
@@ -37,7 +37,7 @@ func (r *userRepository) UpdateUser(ctx context.Context, user *domain.User) erro
 	query := `UPDATE users SET first_name = $1, last_name = $2, nickname = $3, password = $4, email = $5,
 	 country = $6, updated_at = $7 WHERE id = $8`
 	_, err := r.db.ExecContext(ctx, query, user.FirstName, user.LastName, user.Nickname, user.Password, user.Email,
-		 user.Country, user.UpdatedAt, user.ID)
+		user.Country, user.UpdatedAt, user.ID)
 
 	return err
 }
@@ -59,7 +59,7 @@ func (r *userRepository) GetUserByID(ctx context.Context, userID uuid.UUID) (*do
 	var user domain.User
 
 	err := row.Scan(&user.ID, &user.FirstName, &user.LastName, &user.Nickname, &user.Password, &user.Email,
-		 &user.Country, &user.CreatedAt, &user.UpdatedAt)
+		&user.Country, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrNotFound

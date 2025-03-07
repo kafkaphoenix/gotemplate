@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/kafkaphoenix/gotemplate/internal/infrastructure/config"
@@ -59,7 +60,7 @@ func initDB() (*sql.DB, error) {
 	return db, nil
 }
 
-func initHTTPServer(logger zerolog.Logger, userHandler handler.UserHandler) error {
+func startHTTPServer(logger zerolog.Logger, userHandler handler.UserHandler) error {
 	router := mux.NewRouter()
 
 	// Define routes
@@ -75,5 +76,5 @@ func initHTTPServer(logger zerolog.Logger, userHandler handler.UserHandler) erro
 		ReadHeaderTimeout: 3 * time.Second,
 	}
 
-	return s.ListenAndServe() 
+	return s.ListenAndServe()
 }

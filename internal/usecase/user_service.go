@@ -3,13 +3,23 @@ package usecase
 import (
 	"context"
 	"time"
-	"github.com/kafkaphoenix/gotemplate/internal/domain"
+
 	"github.com/google/uuid"
+	"github.com/kafkaphoenix/gotemplate/internal/domain"
 )
+
+type CreateUserParams struct {
+	FirstName string
+	LastName  string
+	Nickname  string
+	Password  string
+	Email     string
+	Country   string
+}
 
 // UserService defines the interface for user-related business logic.
 type UserService interface {
-	CreateUser(ctx context.Context, firstName, lastName, nickname, password, email, country string) (*domain.User, error)
+	CreateUser(ctx context.Context, params CreateUserParams) (*domain.User, error)
 	GetUserByID(ctx context.Context, userID uuid.UUID) (*domain.User, error)
 }
 
@@ -24,18 +34,18 @@ func NewUserService(repo domain.UserRepository) UserService {
 }
 
 // CreateUser handles the creation of a new user.
-func (s *userService) CreateUser(ctx context.Context, firstName, lastName, nickname, password, email, country string) (*domain.User, error) {
+func (s *userService) CreateUser(ctx context.Context, params CreateUserParams) (*domain.User, error) {
 	userID := uuid.New()
 	now := time.Now()
 
 	user := &domain.User{
 		ID:        userID.String(),
-		FirstName: firstName,
-		LastName:  lastName,
-		Nickname:  nickname,
-		Password:  password,  // In a real-world app, you would hash the password
-		Email:     email,
-		Country:   country,
+		FirstName: params.FirstName,
+		LastName:  params.LastName,
+		Nickname:  params.Nickname,
+		Password:  params.Password, // In a real-world app, you would hash the password
+		Email:     params.Email,
+		Country:   params.Country,
 		CreatedAt: now,
 		UpdatedAt: now,
 	}

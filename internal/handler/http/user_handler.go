@@ -38,8 +38,17 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userParams := usecase.CreateUserParams{
+		FirstName: userRequest.FirstName,
+		LastName:  userRequest.LastName,
+		Nickname:  userRequest.Nickname,
+		Password:  userRequest.Password,
+		Email:     userRequest.Email,
+		Country:   userRequest.Country,
+	}
+
 	// Call the usecase to create the user
-	user, err := h.UserService.CreateUser(r.Context(), userRequest.FirstName, userRequest.LastName, userRequest.Nickname, userRequest.Password, userRequest.Email, userRequest.Country)
+	user, err := h.UserService.CreateUser(r.Context(), userParams)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
