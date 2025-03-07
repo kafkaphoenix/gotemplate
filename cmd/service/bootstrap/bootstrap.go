@@ -42,18 +42,25 @@ func initLogger() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 }
 
-func initDB() (*sql.DB, error) {
-	var err error
+// initDB connects to the PostgreSQL database and runs migrations
+func initDB() (*gorm.DB, error) {
+    dbEndpoint := viper.GetString(config.DBEndpointKey)
+    dbName := viper.GetString(config.DBNameKey)
+    dsn := "user=" + dbEndpoint + " dbname=" + dbName + " sslmode=disable"
 
-	dbEndpoint := viper.GetString(config.DBEndpointKey)
-	dbName := viper.GetString(config.DBNameKey)
+    // Connect to the database using GORM
+    db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+    if err != nil {
+        return nil, err
+    }
 
-	db, err := sql.Open(dbName, dbEndpoint)
-	if err != nil {
-		return nil, err
-	}
+    // Run auto migration to create the `users` table if it doesn't exist
+    err = db.AutoMigrate(&domain.User{})
+    if err != nil {
+        return nil, err
+    }
 
-	return db, nil
+    return db, nil
 }
 
 func startHTTPServer(logger zerolog.Logger, userHandler handler.UserHandler) error {

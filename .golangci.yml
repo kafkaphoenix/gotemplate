@@ -367,3 +367,4 @@ issues:
     - .github
     - docs
     - mocks
+    - proto

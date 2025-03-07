@@ -9,15 +9,15 @@ import (
 
 // User represents the user entity in the domain.
 type User struct {
-	ID        string    `json:"id"`
+	ID        string    `json:"id" gorm:"primaryKey;type:uuid;default:uuid_generate_v4()"`
 	FirstName string    `json:"first_name"`
 	LastName  string    `json:"last_name"`
 	Nickname  string    `json:"nickname"`
 	Password  string    `json:"password"`
-	Email     string    `json:"email"`
+	Email     string    `json:"email" gorm:"unique"`
 	Country   string    `json:"country"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
+	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
 }
 
 // UserRepository defines the interface for interacting with the User data.

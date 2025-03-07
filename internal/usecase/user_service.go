@@ -2,37 +2,42 @@ package usecase
 
 import (
 	"context"
-
-	"github.com/google/uuid"
 	"github.com/kafkaphoenix/gotemplate/internal/domain"
+	"github.com/google/uuid"
 )
 
-// UserService defines the interface for user-related business logic.
 type UserService interface {
-	CreateUser(ctx context.Context, user *domain.User) (error)
+	CreateUser(ctx context.Context, user *domain.User) error
+	UpdateUser(ctx context.Context, user *domain.User) error
+	DeleteUser(ctx context.Context, userID uuid.UUID) error
 	GetUserByID(ctx context.Context, userID uuid.UUID) (*domain.User, error)
+	GetUsers(ctx context.Context, country string, limit, offset int) ([]*domain.User, error)
 }
 
-// userService implements the UserService interface.
 type userService struct {
 	userRepo domain.UserRepository
 }
 
-// NewUserService creates a new instance of UserService.
-func NewUserService(userRepo domain.UserRepository) UserService {
-	return &userService{userRepo: userRepo}
+func NewUserService(repo domain.UserRepository) UserService {
+	return &userService{userRepo: repo}
 }
 
-// CreateUser creates a new user in the system
 func (s *userService) CreateUser(ctx context.Context, user *domain.User) error {
-	// Generate a new UUID for the user
-	user.ID = uuid.New().String()
-
-	// Call the repository layer to save the user
 	return s.userRepo.CreateUser(ctx, user)
 }
 
-// GetUserByID retrieves a user by ID.
+func (s *userService) UpdateUser(ctx context.Context, user *domain.User) error {
+	return s.userRepo.UpdateUser(ctx, user)
+}
+
+func (s *userService) DeleteUser(ctx context.Context, userID uuid.UUID) error {
+	return s.userRepo.DeleteUser(ctx, userID)
+}
+
 func (s *userService) GetUserByID(ctx context.Context, userID uuid.UUID) (*domain.User, error) {
 	return s.userRepo.GetUserByID(ctx, userID)
+}
+
+func (s *userService) GetUsers(ctx context.Context, country string, limit, offset int) ([]*domain.User, error) {
+	return s.userRepo.GetUsers(ctx, country, limit, offset)
 }

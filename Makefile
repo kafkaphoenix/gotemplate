@@ -25,7 +25,7 @@ build: ## Build the Docker image
 	docker build -t app -f Dockerfile .
 
 .PHONY: server
-server: ## Run the Docker server
+server: ## Build and Run the Docker server
 	docker-compose up -d app
 
 .PHONY: logs
