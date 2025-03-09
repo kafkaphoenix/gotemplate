@@ -9,12 +9,12 @@ import (
 )
 
 type userRepo struct {
-	queries *sqlc.Queries
+	queries *Queries
 	db      *pgxpool.Pool
 }
 
 func NewUserRepo(db *pgxpool.Pool) domain.UserRepo {
-	queries := sqlc.New(db)
+	queries := New(db)
 	return &userRepo{
 		queries: queries,
 		db:      db,
@@ -22,28 +22,41 @@ func NewUserRepo(db *pgxpool.Pool) domain.UserRepo {
 }
 
 func (r *userRepo) Create(ctx context.Context, user *domain.User) (*domain.User, error) {
-	row, err := r.queries.Create(ctx, user.FirstName, user.LastName, user.Nickname, user.Password, user.Email, user.Country)
+	params := CreateUserParams{
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Nickname:  user.Nickname,
+		Email:     user.Email,
+		Country:   user.Country,
+	}
+	row, err := r.queries.CreateUser(ctx, params)
 	if err != nil {
 		return nil, err
 	}
 	user.ID = row.ID
-	user.CreatedAt = row.CreatedAt
-	user.UpdatedAt = row.UpdatedAt
+	user.CreatedAt = row.CreatedAt.Time
+	user.UpdatedAt = row.UpdatedAt.Time
 	return user, nil
 }
 
 func (r *userRepo) Update(ctx context.Context, user *domain.User) error {
-	_, err := r.queries.Update(ctx, user.FirstName, user.LastName, user.Nickname, user.Password, user.Email, user.Country, user.ID)
-	return err
+	params := UpdateUserParams{
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Nickname:  user.Nickname,
+		Password:  user.Password,
+		Email:     user.Email,
+		Country:   user.Country,
+	}
+	return r.queries.UpdateUser(ctx, params)
 }
 
 func (r *userRepo) Delete(ctx context.Context, id uuid.UUID) error {
-	_, err := r.queries.Delete(ctx, id)
-	return err
+	return r.queries.DeleteUser(ctx, id)
 }
 
 func (r *userRepo) Get(ctx context.Context, id uuid.UUID) (*domain.User, error) {
-	row, err := r.queries.Get(ctx, id)
+	row, err := r.queries.GetUser(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -55,13 +68,18 @@ func (r *userRepo) Get(ctx context.Context, id uuid.UUID) (*domain.User, error) 
 		Password:  row.Password,
 		Email:     row.Email,
 		Country:   row.Country,
-		CreatedAt: row.CreatedAt,
-		UpdatedAt: row.UpdatedAt,
+		CreatedAt: row.CreatedAt.Time,
+		UpdatedAt: row.UpdatedAt.Time,
 	}, nil
 }
 
 func (r *userRepo) List(ctx context.Context, country string, limit, offset int) ([]*domain.User, error) {
-	rows, err := r.queries.List(ctx, country, limit, offset)
+	params := ListUsersParams{
+		Country: country,
+		Limit:   int32(limit),
+		Offset:  int32(offset),
+	}
+	rows, err := r.queries.ListUsers(ctx, params)
 	if err != nil {
 		return nil, err
 	}
@@ -76,8 +94,8 @@ func (r *userRepo) List(ctx context.Context, country string, limit, offset int) 
 			Password:  row.Password,
 			Email:     row.Email,
 			Country:   row.Country,
-			CreatedAt: row.CreatedAt,
-			UpdatedAt: row.UpdatedAt,
+			CreatedAt: row.CreatedAt.Time,
+			UpdatedAt: row.UpdatedAt.Time,
 		})
 	}
 

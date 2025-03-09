@@ -5,7 +5,7 @@ go 1.24.1
 require (
 	github.com/google/uuid v1.6.0
 	github.com/gorilla/mux v1.8.1
-	github.com/jackc/pgx/v5 v5.6.0
+	github.com/jackc/pgx/v5 v5.7.2
 	github.com/joho/godotenv v1.5.1
 	github.com/rs/zerolog v1.33.0
 	github.com/spf13/viper v1.19.0
@@ -22,6 +22,7 @@ require (
 	github.com/fatih/structtag v1.2.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/go-sql-driver/mysql v1.8.1 // indirect
+	github.com/golang/mock v1.6.0 // indirect
 	github.com/google/cel-go v0.22.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
@@ -50,7 +51,7 @@ require (
 	github.com/spf13/cast v1.6.0 // indirect
 	github.com/spf13/cobra v1.8.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	github.com/sqlc-dev/sqlc v1.27.0 // indirect
+	github.com/sqlc-dev/sqlc v1.28.0 // indirect
 	github.com/stoewer/go-strcase v1.2.0 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/tetratelabs/wazero v1.8.2 // indirect
@@ -81,6 +82,7 @@ require (
 )
 
 tool (
+	github.com/golang/mock/mockgen
 	github.com/sqlc-dev/sqlc/cmd/sqlc
 	golang.org/x/tools/cmd/goimports
 )

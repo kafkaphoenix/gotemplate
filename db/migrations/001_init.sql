@@ -6,7 +6,7 @@ CREATE TABLE users (
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     nickname TEXT NOT NULL UNIQUE,
-    password TEXT NOT NULL,  -- Stored as bcrypt hash
+    password TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
     country TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT NOW(),

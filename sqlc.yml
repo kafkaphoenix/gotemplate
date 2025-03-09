@@ -12,3 +12,12 @@ sql:
         emit_empty_slices: true
         emit_exported_queries: false
         emit_json_tags: false
+        rename:
+          crypt: "Password"
+          column_1: "Country"
+        overrides:
+          - db_type: "uuid"
+            go_type:
+              import: "github.com/google/uuid"
+              type: "UUID"
+          
