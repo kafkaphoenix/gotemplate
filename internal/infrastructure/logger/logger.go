@@ -36,9 +36,7 @@ func Init(logLevel int) *slog.Logger {
 		logLevel = InfoLevel // Default
 	}
 
-	_logger := zerolog.New(os.Stdout).
-		Level(zerologLevels[logLevel]).
-		With().Timestamp().Logger()
+	_logger := zerolog.New(os.Stdout).Level(zerologLevels[logLevel])
 
 	return slog.New(
 		slogzerolog.Option{Logger: &_logger}.NewZerologHandler(),
