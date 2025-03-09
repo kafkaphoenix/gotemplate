@@ -30,7 +30,6 @@ func (s *HTTPServer) Start() error {
 
 	// Define routes
 	router.HandleFunc("/users", s.handler.Create).Methods("POST")
-	router.HandleFunc("/users/{id}", s.handler.Get).Methods("GET")
 	router.HandleFunc("/users", s.handler.List).Methods("GET")
 	router.HandleFunc("/users/{id}", s.handler.Update).Methods("PATCH")
 	router.HandleFunc("/users/{id}", s.handler.Delete).Methods("DELETE")

@@ -79,23 +79,6 @@ func (h *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func (h *UserHandler) Get(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
-	uid, err := uuid.Parse(id)
-	if err != nil {
-		http.Error(w, "Invalid user ID", http.StatusBadRequest)
-		return
-	}
-
-	u, err := h.service.Get(r.Context(), uid)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	json.NewEncoder(w).Encode(u)
-}
-
 func (h *UserHandler) List(w http.ResponseWriter, r *http.Request) {
 	country := r.URL.Query().Get("country")
 	l := r.URL.Query().Get("limit")

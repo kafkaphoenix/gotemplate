@@ -24,13 +24,13 @@ func NewUserRepo(db *pgxpool.Pool) domain.UserRepo {
 
 func (r *userRepo) Create(ctx context.Context, user *domain.User) (*domain.User, error) {
 	// Check if nickname already exists
-	_, err := r.queries.GetByNickname(ctx, user.Nickname)
+	_, err := r.queries.GetUserByNickname(ctx, user.Nickname)
 	if err == nil {
 		return nil, fmt.Errorf("nickname '%s' already taken", user.Nickname)
 	}
 
 	// Check if email already exists
-	_, err = r.queries.GetByEmail(ctx, user.Email)
+	_, err = r.queries.GetUserByEmail(ctx, user.Email)
 	if err == nil {
 		return nil, fmt.Errorf("email '%s' already taken", user.Email)
 	}
@@ -87,7 +87,7 @@ func (r *userRepo) GetByID(ctx context.Context, id uuid.UUID) (*domain.User, err
 }
 
 func (r *userRepo) GetByEmail(ctx context.Context, email string) (*domain.User, error) {
-	row, err := r.queries.GetByEmail(ctx, email)
+	row, err := r.queries.GetUserByEmail(ctx, email)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +105,7 @@ func (r *userRepo) GetByEmail(ctx context.Context, email string) (*domain.User, 
 }
 
 func (r *userRepo) GetByNickname(ctx context.Context, nickname string) (*domain.User, error) {
-	row, err := r.queries.GetByNickname(ctx, nickname)
+	row, err := r.queries.GetUserByNickname(ctx, nickname)
 	if err != nil {
 		return nil, err
 	}

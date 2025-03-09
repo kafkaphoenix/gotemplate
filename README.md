@@ -78,8 +78,8 @@ GoTemplate provides a **Makefile** for easy management. Commonly used commands i
 
 ### Build and run
 ```sh
-make build   # Build Docker image
-make server  # Build & Start the server
+make build   # Build Docker image for the app
+make app     # Run the Docker container for the app
 ```
 
 ### Lint, test and generators
@@ -87,6 +87,7 @@ make server  # Build & Start the server
 make lint   # Run Golangci-Lint, Goimports and Gofmt
 make test   # Run unit and integration tests
 make mocks  # Generate mock implementations
+make sqlc   # Generate SQLC code
 ```
 
 ## API Endpoints
