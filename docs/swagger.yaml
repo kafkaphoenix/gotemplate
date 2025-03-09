@@ -1,0 +1,65 @@
+definitions:
+  domain.User:
+    properties:
+      country:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      nickname:
+        type: string
+      password:
+        minLength: 8
+        type: string
+      updated_at:
+        type: string
+    required:
+    - country
+    - email
+    - first_name
+    - last_name
+    - nickname
+    - password
+    type: object
+info:
+  contact: {}
+  description: GoTemplate is a microservice example that follows clean architecture
+  license:
+    name: MIT
+    url: https://github.com/kafkaphoenix/gotemplate/?tab=MIT-1-ov-file#readme
+  title: GoTemplate API
+  version: "1.0"
+paths:
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Given a User object, it creates a new user in the system
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.User'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Create an User
+      tags:
+      - users
+swagger: "2.0"

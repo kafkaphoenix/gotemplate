@@ -20,6 +20,10 @@ mocks: ## Generates mocks
 sqlc: ## Generate SQLC code
 	go tool sqlc generate
 
+.PHONY: swagger
+swagger: ## Generate Swagger documentation for the API. It will be available at http://localhost:8081/swagger/index.html
+	go tool swag init -g ./internal/delivery/http_server/http_server.go -o ./docs
+
 .PHONY: build
 build: ## Build the Docker image for the app
 	docker build -t app -f Dockerfile .

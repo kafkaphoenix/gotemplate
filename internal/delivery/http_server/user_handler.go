@@ -31,6 +31,16 @@ func (h *UserHandler) RegisterRoutes(e *echo.Echo) {
 	g.GET("", h.List)
 }
 
+// CreateUser godoc
+// @Summary      Create an User
+// @Description  Given a User object, it creates a new user in the system
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Account ID"
+// @Success      201  {object}  domain.User
+// @Failure      500  {object}  string
+// @Router       /users [post]
 func (h *UserHandler) Create(c echo.Context) error {
 	var req domain.User
 	if err := c.Bind(&req); err != nil {

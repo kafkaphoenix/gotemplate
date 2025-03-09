@@ -1,0 +1,96 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "GoTemplate is a microservice example that follows clean architecture",
+        "title": "GoTemplate API",
+        "contact": {},
+        "license": {
+            "name": "MIT",
+            "url": "https://github.com/kafkaphoenix/gotemplate/?tab=MIT-1-ov-file#readme"
+        },
+        "version": "1.0"
+    },
+    "paths": {
+        "/users": {
+            "post": {
+                "description": "Given a User object, it creates a new user in the system",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Create an User",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Account ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/domain.User"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "domain.User": {
+            "type": "object",
+            "required": [
+                "country",
+                "email",
+                "first_name",
+                "last_name",
+                "nickname",
+                "password"
+            ],
+            "properties": {
+                "country": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "nickname": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}
