@@ -5,32 +5,28 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/kafkaphoenix/gotemplate/internal/domain"
 )
 
 type userRepo struct {
-	queries *Queries
-	db      *pgxpool.Pool
+	storage *Storage
 }
 
-func NewUserRepo(db *pgxpool.Pool) domain.UserRepo {
-	queries := New(db)
+func NewUserRepo(s *Storage) domain.UserRepo {
 	return &userRepo{
-		queries: queries,
-		db:      db,
+		storage: s,
 	}
 }
 
 func (r *userRepo) Create(ctx context.Context, user *domain.User) (*domain.User, error) {
-	// Check if nickname already exists
-	_, err := r.queries.GetUserByNickname(ctx, user.Nickname)
+	// check if nickname already exists
+	_, err := r.storage.Queries.GetUserByNickname(ctx, user.Nickname)
 	if err == nil {
 		return nil, fmt.Errorf("nickname '%s' already taken", user.Nickname)
 	}
 
-	// Check if email already exists
-	_, err = r.queries.GetUserByEmail(ctx, user.Email)
+	// check if email already exists
+	_, err = r.storage.Queries.GetUserByEmail(ctx, user.Email)
 	if err == nil {
 		return nil, fmt.Errorf("email '%s' already taken", user.Email)
 	}
@@ -42,7 +38,7 @@ func (r *userRepo) Create(ctx context.Context, user *domain.User) (*domain.User,
 		Email:     user.Email,
 		Country:   user.Country,
 	}
-	row, err := r.queries.CreateUser(ctx, params)
+	row, err := r.storage.Queries.CreateUser(ctx, params)
 	if err != nil {
 		return nil, err
 	}
@@ -61,15 +57,15 @@ func (r *userRepo) Update(ctx context.Context, user *domain.User) error {
 		Email:     user.Email,
 		Country:   user.Country,
 	}
-	return r.queries.UpdateUser(ctx, params)
+	return r.storage.Queries.UpdateUser(ctx, params)
 }
 
 func (r *userRepo) Delete(ctx context.Context, id uuid.UUID) error {
-	return r.queries.DeleteUser(ctx, id)
+	return r.storage.Queries.DeleteUser(ctx, id)
 }
 
 func (r *userRepo) GetByID(ctx context.Context, id uuid.UUID) (*domain.User, error) {
-	row, err := r.queries.GetUserByID(ctx, id)
+	row, err := r.storage.Queries.GetUserByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +83,7 @@ func (r *userRepo) GetByID(ctx context.Context, id uuid.UUID) (*domain.User, err
 }
 
 func (r *userRepo) GetByEmail(ctx context.Context, email string) (*domain.User, error) {
-	row, err := r.queries.GetUserByEmail(ctx, email)
+	row, err := r.storage.Queries.GetUserByEmail(ctx, email)
 	if err != nil {
 		return nil, err
 	}
@@ -105,7 +101,7 @@ func (r *userRepo) GetByEmail(ctx context.Context, email string) (*domain.User, 
 }
 
 func (r *userRepo) GetByNickname(ctx context.Context, nickname string) (*domain.User, error) {
-	row, err := r.queries.GetUserByNickname(ctx, nickname)
+	row, err := r.storage.Queries.GetUserByNickname(ctx, nickname)
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +124,7 @@ func (r *userRepo) List(ctx context.Context, country string, limit, offset int) 
 		Limit:   int32(limit),
 		Offset:  int32(offset),
 	}
-	rows, err := r.queries.ListUsers(ctx, params)
+	rows, err := r.storage.Queries.ListUsers(ctx, params)
 	if err != nil {
 		return nil, err
 	}

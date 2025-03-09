@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	"log/slog"
 	"time"
 
 	"github.com/google/uuid"
@@ -24,4 +25,11 @@ type UserRepo interface {
 	Update(ctx context.Context, u *User) error
 	Delete(ctx context.Context, uid uuid.UUID) error
 	List(ctx context.Context, country string, limit, offset int) ([]*User, error)
+}
+
+// LogValue implements the slog.Valuer interface
+// to provide a loggable value for the user entity preventing
+// user's fields that should not be logged from being exposed.
+func (u User) LogValue() slog.Value {
+	return slog.StringValue(u.ID.String())
 }

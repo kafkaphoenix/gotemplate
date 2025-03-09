@@ -1,104 +1,104 @@
 package http_server
 
 import (
-	"encoding/json"
+	"log/slog"
 	"net/http"
 	"strconv"
 
 	"github.com/google/uuid"
-	"github.com/gorilla/mux"
 	"github.com/kafkaphoenix/gotemplate/internal/domain"
 	"github.com/kafkaphoenix/gotemplate/internal/usecase"
+	"github.com/labstack/echo/v4"
 )
 
 type UserHandler struct {
+	logger  *slog.Logger
 	service usecase.UserService
 }
 
-func NewUserHandler(s usecase.UserService) *UserHandler {
-	return &UserHandler{service: s}
+func NewUserHandler(logger *slog.Logger, service usecase.UserService) *UserHandler {
+	return &UserHandler{
+		logger:  logger,
+		service: service,
+	}
 }
 
-func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
-	var u domain.User
-	err := json.NewDecoder(r.Body).Decode(&u)
-	if err != nil {
-		http.Error(w, "Invalid input", http.StatusBadRequest)
-		return
-	}
-
-	newUser, err := h.service.Create(r.Context(), &u)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(newUser)
+func (h *UserHandler) RegisterRoutes(e *echo.Echo) {
+	g := e.Group("/users")
+	g.POST("", h.Create)
+	g.PATCH("/:id", h.Update)
+	g.DELETE("/:id", h.Delete)
+	g.GET("", h.List)
 }
 
-func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
+func (h *UserHandler) Create(c echo.Context) error {
+	var req domain.User
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid input"})
+	}
+
+	newUser, err := h.service.Create(c.Request().Context(), &req)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+	}
+
+	// only to showcase the logger no need to log this in production
+	h.logger.Debug("User created", slog.String("id", newUser.ID.String()))
+
+	return c.JSON(http.StatusCreated, newUser)
+}
+
+func (h *UserHandler) Update(c echo.Context) error {
+	id := c.Param("id")
 	uid, err := uuid.Parse(id)
 	if err != nil {
-		http.Error(w, "Invalid user ID", http.StatusBadRequest)
-		return
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid user ID"})
 	}
 
-	var u domain.User
-	err = json.NewDecoder(r.Body).Decode(&u)
-	if err != nil {
-		http.Error(w, "Invalid input", http.StatusBadRequest)
-		return
+	var req domain.User
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid input"})
 	}
 
-	u.ID = uid
-	err = h.service.Update(r.Context(), &u)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	req.ID = uid
+	if err := h.service.Update(c.Request().Context(), &req); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
-	w.WriteHeader(http.StatusNoContent)
+	return c.NoContent(http.StatusNoContent)
 }
 
-func (h *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
+func (h *UserHandler) Delete(c echo.Context) error {
+	id := c.Param("id")
 	uid, err := uuid.Parse(id)
 	if err != nil {
-		http.Error(w, "Invalid user ID", http.StatusBadRequest)
-		return
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": "Invalid user ID"})
 	}
 
-	err = h.service.Delete(r.Context(), uid)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+	if err := h.service.Delete(c.Request().Context(), uid); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
-	w.WriteHeader(http.StatusNoContent)
+	return c.NoContent(http.StatusNoContent)
 }
 
-func (h *UserHandler) List(w http.ResponseWriter, r *http.Request) {
-	country := r.URL.Query().Get("country")
-	l := r.URL.Query().Get("limit")
-	o := r.URL.Query().Get("offset")
+func (h *UserHandler) List(c echo.Context) error {
+	country := c.QueryParam("country")
+	limit := c.QueryParam("limit")
+	offset := c.QueryParam("offset")
 
-	limit, err := strconv.Atoi(l)
-	if err != nil || limit <= 0 {
-		limit = 10 // Default limit
-	}
-
-	offset, err := strconv.Atoi(o)
-	if err != nil || offset < 0 {
-		offset = 0 // Default offset
-	}
-
-	users, err := h.service.List(r.Context(), country, limit, offset)
+	users, err := h.service.List(c.Request().Context(), country, parseInt(limit, 10), parseInt(offset, 0))
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 
-	json.NewEncoder(w).Encode(users)
+	return c.JSON(http.StatusOK, users)
+}
+
+func parseInt(value string, defaultVal int) int {
+	n, err := strconv.Atoi(value)
+	if err != nil || n < 0 {
+		return defaultVal
+	}
+	return n
 }

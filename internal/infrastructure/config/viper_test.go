@@ -40,7 +40,7 @@ func (s *ConfigTestSuite) TestLoadYAML_OK() {
 	s.Equal("localhost", cfg.DB.Host)
 }
 
-// TestLoadEnv_OK tests env variable precedence over config file
+// TestLoadEnv_OK tests env variable precedence over config file.
 func (s *ConfigTestSuite) TestLoadEnv_OK() {
 	// GIVEN
 	os.Setenv("GOT_DB_HOST", "testDB")

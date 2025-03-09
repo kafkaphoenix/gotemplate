@@ -18,6 +18,8 @@ const (
 	_configFileName  = "config"
 	_configFileType  = "yml"
 	_configFilePath  = "."
+	ServerTypeGRPC   = "grpc"
+	ServerTypeHTTP   = "http"
 )
 
 type AppConfig struct {
@@ -33,7 +35,9 @@ type AppConfig struct {
 		Port int `mapstructure:"port"`
 	} `mapstructure:"nats"`
 	App struct {
-		Port int `mapstructure:"port"`
+		Port       int    `mapstructure:"port"`
+		ServerType string `mapstructure:"server_type"`
+		LogLevel   int    `mapstructure:"log_level"`
 	} `mapstructure:"app"`
 }
 
@@ -49,7 +53,7 @@ func Load() (*AppConfig, error) {
 	var err error
 
 	once.Do(func() {
-		// Enable BindStruct to allow unmarshal env into a nested struct
+		// enable BindStruct to allow unmarshal env into a nested struct
 		// https://github.com/spf13/viper/pull/1429
 		viper.SetOptions(viper.ExperimentalBindStruct())
 		viper.AutomaticEnv()

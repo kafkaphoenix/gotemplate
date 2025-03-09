@@ -11,3 +11,6 @@ nats:
   port: 4222
 app:
   port: 8081
+  server_type: "http"
+# -1: Trace, 0: Debug, 1: Info, 2: Warn, 3: Error, 4: Fatal, 5: Panic
+  log_level: 0

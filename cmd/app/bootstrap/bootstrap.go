@@ -1,17 +1,14 @@
 package bootstrap
 
 import (
-	"context"
 	"fmt"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/kafkaphoenix/gotemplate/internal/infrastructure/config"
+	"github.com/kafkaphoenix/gotemplate/internal/infrastructure/logger"
 
 	"github.com/kafkaphoenix/gotemplate/internal/delivery/http_server"
 	"github.com/kafkaphoenix/gotemplate/internal/infrastructure/postgres"
 	"github.com/kafkaphoenix/gotemplate/internal/usecase"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 )
 
 func Run() error {
@@ -20,43 +17,30 @@ func Run() error {
 		return err
 	}
 
-	initLogger()
+	logger := logger.Init(cfg.App.LogLevel)
 
-	dbPool, err := initDB(cfg)
+	storage, err := postgres.NewStorage(cfg)
 	if err != nil {
 		return err
 	}
-	defer dbPool.Close()
+	defer storage.DB.Close()
 
-	userRepo := postgres.NewUserRepo(dbPool)
+	// create repo, service per entity in the domain
+	userRepo := postgres.NewUserRepo(storage)
 	userService := usecase.NewUserService(userRepo)
-	userHandler := http_server.NewUserHandler(userService)
 
-	server := http_server.NewHTTPServer(log.Logger, userHandler)
-	return server.Start(cfg)
-}
+	switch cfg.App.ServerType {
+	case config.ServerTypeGRPC:
+		return nil
+	case config.ServerTypeHTTP:
+		// create handler per entity in the domain
+		userHandler := http_server.NewUserHandler(logger, userService)
 
-func initLogger() {
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-	zerolog.SetGlobalLevel(zerolog.InfoLevel)
-}
+		server := http_server.New(logger)
+		server.RegisterRoutes(userHandler.RegisterRoutes)
 
-func initDB(cfg *config.AppConfig) (*pgxpool.Pool, error) {
-	// Create dsn for database connection
-	dsn := fmt.Sprintf(
-		"postgresql://%s:%s@%s:%d/%s?sslmode=%s",
-		cfg.DB.User,
-		cfg.DB.Pass,
-		cfg.DB.Host,
-		cfg.DB.Port,
-		cfg.DB.Name,
-		cfg.DB.SSL,
-	)
-
-	dbPool, err := pgxpool.New(context.Background(), dsn)
-	if err != nil {
-		return nil, fmt.Errorf("unable to connect to database: %w", err)
+		return server.Start(cfg)
+	default:
+		return fmt.Errorf("unsupported server type: %s", cfg.App.ServerType)
 	}
-
-	return dbPool, nil
 }
