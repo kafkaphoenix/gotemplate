@@ -19,7 +19,7 @@ func New(logger *slog.Logger) *HTTPServer {
 	e.HidePort = true
 	return &HTTPServer{
 		logger: logger,
-		server: echo.New(),
+		server: e,
 	}
 }
 
