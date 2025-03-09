@@ -5,17 +5,13 @@ meta {
 }
 
 patch {
-  url: http://localhost:8081/users/:user_id?Country=USA
+  url: http://localhost:8081/users/:user_id
   body: json
   auth: none
 }
 
-params:query {
-  Country: USA
-}
-
 params:path {
-  user_id: e805d3d0-f536-49ee-9acf-7528d7930fc1
+  user_id: a965f3bf-4df6-4cf7-950d-0fa5f8c71f64
 }
 
 headers {
@@ -24,9 +20,6 @@ headers {
 
 body:json {
   {
-    "first_name": "UpdatedName",
-    "last_name": "UpdatedLast",
-    "email": "updated.email@example.com",
     "country": "Canada"
   }
 }

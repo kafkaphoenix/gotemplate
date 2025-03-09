@@ -23,6 +23,8 @@ type UserRepo interface {
 	Create(ctx context.Context, u *User) (*User, error)
 	Update(ctx context.Context, u *User) error
 	Delete(ctx context.Context, uid uuid.UUID) error
-	Get(ctx context.Context, uid uuid.UUID) (*User, error)
+	GetByID(ctx context.Context, uid uuid.UUID) (*User, error)
+	GetByEmail(ctx context.Context, email string) (*User, error)
+	GetByNickname(ctx context.Context, nickname string) (*User, error)
 	List(ctx context.Context, country string, limit, offset int) ([]*User, error)
 }

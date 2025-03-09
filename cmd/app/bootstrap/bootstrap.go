@@ -43,10 +43,10 @@ func initDB() (*pgxpool.Pool, error) {
 	// Create dsn for database connection
 	dsn := fmt.Sprintf(
 		"postgresql://%s:%s@%s:%d/%s?sslmode=%s",
-		viper.GetString(config.DBHostKey),
-		viper.GetInt(config.DBPortKey),
 		viper.GetString(config.DBUserKey),
 		viper.GetString(config.DBPassKey),
+		viper.GetString(config.DBHostKey),
+		viper.GetInt(config.DBPortKey),
 		viper.GetString(config.DBNameKey),
 		viper.GetString(config.DBSSLKey),
 	)

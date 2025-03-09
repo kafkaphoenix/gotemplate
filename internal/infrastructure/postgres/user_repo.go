@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -22,6 +23,18 @@ func NewUserRepo(db *pgxpool.Pool) domain.UserRepo {
 }
 
 func (r *userRepo) Create(ctx context.Context, user *domain.User) (*domain.User, error) {
+	// Check if nickname already exists
+	_, err := r.queries.GetByNickname(ctx, user.Nickname)
+	if err == nil {
+		return nil, fmt.Errorf("nickname '%s' already taken", user.Nickname)
+	}
+
+	// Check if email already exists
+	_, err = r.queries.GetByEmail(ctx, user.Email)
+	if err == nil {
+		return nil, fmt.Errorf("email '%s' already taken", user.Email)
+	}
+
 	params := CreateUserParams{
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
@@ -55,8 +68,44 @@ func (r *userRepo) Delete(ctx context.Context, id uuid.UUID) error {
 	return r.queries.DeleteUser(ctx, id)
 }
 
-func (r *userRepo) Get(ctx context.Context, id uuid.UUID) (*domain.User, error) {
-	row, err := r.queries.GetUser(ctx, id)
+func (r *userRepo) GetByID(ctx context.Context, id uuid.UUID) (*domain.User, error) {
+	row, err := r.queries.GetUserByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	return &domain.User{
+		ID:        row.ID,
+		FirstName: row.FirstName,
+		LastName:  row.LastName,
+		Nickname:  row.Nickname,
+		Password:  row.Password,
+		Email:     row.Email,
+		Country:   row.Country,
+		CreatedAt: row.CreatedAt.Time,
+		UpdatedAt: row.UpdatedAt.Time,
+	}, nil
+}
+
+func (r *userRepo) GetByEmail(ctx context.Context, email string) (*domain.User, error) {
+	row, err := r.queries.GetByEmail(ctx, email)
+	if err != nil {
+		return nil, err
+	}
+	return &domain.User{
+		ID:        row.ID,
+		FirstName: row.FirstName,
+		LastName:  row.LastName,
+		Nickname:  row.Nickname,
+		Password:  row.Password,
+		Email:     row.Email,
+		Country:   row.Country,
+		CreatedAt: row.CreatedAt.Time,
+		UpdatedAt: row.UpdatedAt.Time,
+	}, nil
+}
+
+func (r *userRepo) GetByNickname(ctx context.Context, nickname string) (*domain.User, error) {
+	row, err := r.queries.GetByNickname(ctx, nickname)
 	if err != nil {
 		return nil, err
 	}

@@ -22,7 +22,7 @@ func TestInit_OK(t *testing.T) {
 	config.Init()
 
 	// THEN
-	assert.Equal(t, "localhost", viper.GetString(config.DBHostKey))
+	assert.Equal(t, "postgres", viper.GetString(config.DBHostKey))
 	assert.Equal(t, "5432", viper.GetString(config.DBPortKey))
 	assert.Equal(t, "user", viper.GetString(config.DBUserKey))
 	assert.Equal(t, "password", viper.GetString(config.DBPassKey))

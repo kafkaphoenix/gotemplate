@@ -21,11 +21,11 @@ sqlc: ## Generate SQLC code
 	go tool sqlc generate
 
 .PHONY: build
-build: ## Build the Docker image
+build: ## Build the Docker image for the app
 	docker build -t app -f Dockerfile .
 
-.PHONY: server
-server: ## Build and Run the Docker server
+.PHONY: app
+app: ## Run the Docker container for the app
 	docker-compose up -d app
 
 .PHONY: logs

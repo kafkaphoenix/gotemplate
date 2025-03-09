@@ -98,6 +98,7 @@ curl -X POST http://localhost:8081/users \
         "first_name": "Alice",
         "last_name": "Bob",
         "nickname": "AB123",
+        "password": "password",
         "email": "alice@bob.com",
         "country": "UK"
     }'
