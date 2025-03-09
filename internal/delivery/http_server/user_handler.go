@@ -16,10 +16,10 @@ type UserHandler struct {
 	service usecase.UserService
 }
 
-func NewUserHandler(logger *slog.Logger, service usecase.UserService) *UserHandler {
+func NewUserHandler(l *slog.Logger, s usecase.UserService) *UserHandler {
 	return &UserHandler{
-		logger:  logger,
-		service: service,
+		logger:  l,
+		service: s,
 	}
 }
 

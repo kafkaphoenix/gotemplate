@@ -13,12 +13,12 @@ type HTTPServer struct {
 	server *echo.Echo
 }
 
-func New(logger *slog.Logger) *HTTPServer {
+func New(l *slog.Logger) *HTTPServer {
 	e := echo.New()
 	e.HideBanner = true
 	e.HidePort = true
 	return &HTTPServer{
-		logger: logger,
+		logger: l,
 		server: e,
 	}
 }
