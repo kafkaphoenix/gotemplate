@@ -313,7 +313,6 @@ linters:
     - nolintlint # reports ill-formed, insufficiently specific, or unused nolint directives
     - perfsprint # optimizes string concatenation
     - prealloc # finds slice declarations that could potentially be preallocated
-    - protogetter # reports direct reads from proto message fields when getters should be used
     - reassign # checks that package variables are not reassigned
     - revive # add extra rules to golint: https://github.com/mgechev/revive?tab=readme-ov-file#golangci-lint
     - sloglint # checks for global loggers and contextless slog calls
@@ -367,4 +366,5 @@ issues:
     - .github
     - docs
     - mocks
-    - proto
+    - db
+    - bruno

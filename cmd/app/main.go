@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/kafkaphoenix/gotemplate/cmd/service/bootstrap"
+	"github.com/kafkaphoenix/gotemplate/cmd/app/bootstrap"
 )
 
 func main() {

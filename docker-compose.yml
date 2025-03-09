@@ -1,19 +1,27 @@
 services:
   postgres:
-    image: postgres:17.4
+    image: postgres:17.4-alpine3.21
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
     networks:
       - app-network
     env_file:
       - .env
+    volumes:
+      - db/migrations/001_init.sql:/docker-entrypoint-initdb.d/initdb.sql
 
   nats:
-    image: nats:2.10.26
+    image: nats:2.10.26-alpine3.21
+    ports:
+      - "${NATS_PORT}:${NATS_PORT}"
     networks:
       - app-network
+    env_file:
+      - .env
 
   app:
     container_name: gotemplate
@@ -29,9 +37,6 @@ services:
       - "${APP_PORT}:${APP_PORT}"
     env_file:
       - .env
-
-volumes:
-  postgres-data:
 
 networks:
   app-network:

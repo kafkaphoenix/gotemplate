@@ -18,7 +18,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 
 # -ldflags optimize binary size
 # -trimpath remove absolute path from binary
-RUN go build -ldflags="-s -w -extldflags '-static'" -trimpath -o service ./cmd/service/main.go
+RUN go build -ldflags="-s -w -extldflags '-static'" -trimpath -o gotemplate ./cmd/app/main.go
 
 # final image
 FROM alpine:3.21
@@ -44,10 +44,10 @@ RUN apk update && apk upgrade && \
 WORKDIR /app
 
 # copy binaries and config files
-COPY --from=builder --chown=${UID}:${GID} /app/service .
+COPY --from=builder --chown=${UID}:${GID} /app/gotemplate .
 COPY --chown=${UID}:${GID} config.yml .
 
 # drop root privileges
 USER ${USER}
 
-CMD ["./service"]
+CMD ["./gotemplate"]

@@ -22,6 +22,12 @@ func TestInit_OK(t *testing.T) {
 	config.Init()
 
 	// THEN
-	assert.Equal(t, "5432", viper.GetString("DB_PORT"))
-	assert.Equal(t, "0.0.0.0:8081", viper.GetString(config.AppURLKey))
+	assert.Equal(t, "localhost", viper.GetString(config.DBHostKey))
+	assert.Equal(t, "5432", viper.GetString(config.DBPortKey))
+	assert.Equal(t, "user", viper.GetString(config.DBUserKey))
+	assert.Equal(t, "password", viper.GetString(config.DBPassKey))
+	assert.Equal(t, "dbname", viper.GetString(config.DBNameKey))
+	assert.Equal(t, "disable", viper.GetString(config.DBSSLKey))
+	assert.Equal(t, "4222", viper.GetString(config.NatsPortKey))
+	assert.Equal(t, "8081", viper.GetString(config.AppPortKey))
 }

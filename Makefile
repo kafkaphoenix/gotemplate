@@ -16,6 +16,10 @@ tests: ## Executes tests
 mocks: ## Generates mocks
 	go generate ./...
 
+.PHONY: sqlc
+sqlc: ## Generate SQLC code
+	go tool sqlc generate
+
 .PHONY: build
 build: ## Build the Docker image
 	docker build -t app -f Dockerfile .

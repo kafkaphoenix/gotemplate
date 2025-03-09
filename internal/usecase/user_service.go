@@ -8,37 +8,37 @@ import (
 )
 
 type UserService interface {
-	CreateUser(ctx context.Context, user *domain.User) error
-	UpdateUser(ctx context.Context, user *domain.User) error
-	DeleteUser(ctx context.Context, userID uuid.UUID) error
-	GetUserByID(ctx context.Context, userID uuid.UUID) (*domain.User, error)
-	GetUsers(ctx context.Context, country string, limit, offset int) ([]*domain.User, error)
+	Create(ctx context.Context, u *domain.User) (*domain.User, error)
+	Update(ctx context.Context, u *domain.User) error
+	Delete(ctx context.Context, uid uuid.UUID) error
+	Get(ctx context.Context, uid uuid.UUID) (*domain.User, error)
+	List(ctx context.Context, country string, limit, offset int) ([]*domain.User, error)
 }
 
 type userService struct {
-	userRepo domain.UserRepository
+	repo domain.UserRepo
 }
 
-func NewUserService(repo domain.UserRepository) UserService {
-	return &userService{userRepo: repo}
+func NewUserService(r domain.UserRepo) UserService {
+	return &userService{repo: r}
 }
 
-func (s *userService) CreateUser(ctx context.Context, user *domain.User) error {
-	return s.userRepo.CreateUser(ctx, user)
+func (s *userService) Create(ctx context.Context, u *domain.User) (*domain.User, error) {
+	return s.repo.Create(ctx, u)
 }
 
-func (s *userService) UpdateUser(ctx context.Context, user *domain.User) error {
-	return s.userRepo.UpdateUser(ctx, user)
+func (s *userService) Update(ctx context.Context, u *domain.User) error {
+	return s.repo.Update(ctx, u)
 }
 
-func (s *userService) DeleteUser(ctx context.Context, userID uuid.UUID) error {
-	return s.userRepo.DeleteUser(ctx, userID)
+func (s *userService) Delete(ctx context.Context, uid uuid.UUID) error {
+	return s.repo.Delete(ctx, uid)
 }
 
-func (s *userService) GetUserByID(ctx context.Context, userID uuid.UUID) (*domain.User, error) {
-	return s.userRepo.GetUserByID(ctx, userID)
+func (s *userService) Get(ctx context.Context, uid uuid.UUID) (*domain.User, error) {
+	return s.repo.Get(ctx, uid)
 }
 
-func (s *userService) GetUsers(ctx context.Context, country string, limit, offset int) ([]*domain.User, error) {
-	return s.userRepo.GetUsers(ctx, country, limit, offset)
+func (s *userService) List(ctx context.Context, country string, limit, offset int) ([]*domain.User, error) {
+	return s.repo.List(ctx, country, limit, offset)
 }

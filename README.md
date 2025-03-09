@@ -1,20 +1,19 @@
 # GoTemplate
 
 ## Description
-GoTemplate is a Golang project template with a PostgreSQL database. It includes a HTTP api for user operations. The project follows a clean architecture and utilizes NATS for notifications.
+GoTemplate is a Golang project with a PostgreSQL database. It includes a HTTP api for user operations. The project follows a clean architecture and utilizes NATS for notifications.
 
 ## Architecture
 This project is designed following the **Clean Architecture** pattern, ensuring a decoupled, maintainable, and testable codebase. **Clean Architecture** organizes the application into distinct layers, each with explicit dependencies pointing inwards. This structure ensures that the core business logic remains independent of external systems, such as databases, frameworks, or user interfaces.
 
 - **PostgreSQL**: Used as the primary database.
 - **NATS**: Used for asynchronous messaging and notifications.
-- **Testify**: Used for unit testing.
 
 ## Compatibility matrix
 
 ### app: 1.0.0
 
-| Driver ↓ / Postgress → | 13 | 14 | 15 | 16 | 17 |
+| Driver ↓ / Postgres → | 13 | 14 | 15 | 16 | 17 |
 |:--------------------:|:---:|:---:|:---:|:---:|:---:|
 | 1.10.9               | ✅  | ✅  | ✅  | ✅  | ✅  |
 
@@ -60,16 +59,6 @@ Ensure that Docker and Docker Compose are installed:
 - [Docker Installation](https://docs.docker.com/get-docker/)
 - [Docker Compose Installation](https://docs.docker.com/compose/install/)
 
-### 4. Install Protocol Buffers (proto) and gRPC
-Install Protocol Buffers for gRPC communication:
-```sh
-go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.30.0
-go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.3.0
-```
-For additional setup, refer to:
-- [Protobuf Setup](https://protobuf.dev/getting-started/gotutorial/)
-- [gRPC Setup](https://grpc.io/docs/protoc-installation/)
-
 ### 5. Install Pre-commit Hooks
 Used for enforcing coding standards and automated checks, please refer to [Pre-commit](https://pre-commit.com/):
 ```sh
@@ -79,11 +68,9 @@ pre-commit install
 
 ## Dependencies
 This project includes the following key dependencies:
-- [Cobra](https://github.com/spf13/cobra) – CLI framework
 - [Testify](https://github.com/stretchr/testify) – Testing framework
 - [Mux](https://github.com/gorilla/mux) – HTTP router
 - [Viper](https://github.com/spf13/viper) – Configuration management
-- [GORM](https://gorm.io/) – ORM library
 - [NATS](https://nats.io/) – Message broker
 
 ## Usage
