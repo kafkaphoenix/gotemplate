@@ -6,7 +6,6 @@ import (
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/kafkaphoenix/gotemplate/internal/infrastructure/config"
-	"github.com/spf13/viper"
 
 	"github.com/kafkaphoenix/gotemplate/internal/delivery/http_server"
 	"github.com/kafkaphoenix/gotemplate/internal/infrastructure/postgres"
@@ -16,11 +15,14 @@ import (
 )
 
 func Run() error {
-	config.Init()
+	cfg, err := config.Load()
+	if err != nil {
+		return err
+	}
 
 	initLogger()
 
-	dbPool, err := initDB()
+	dbPool, err := initDB(cfg)
 	if err != nil {
 		return err
 	}
@@ -31,7 +33,7 @@ func Run() error {
 	userHandler := http_server.NewUserHandler(userService)
 
 	server := http_server.NewHTTPServer(log.Logger, userHandler)
-	return server.Start()
+	return server.Start(cfg)
 }
 
 func initLogger() {
@@ -39,16 +41,16 @@ func initLogger() {
 	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 }
 
-func initDB() (*pgxpool.Pool, error) {
+func initDB(cfg *config.AppConfig) (*pgxpool.Pool, error) {
 	// Create dsn for database connection
 	dsn := fmt.Sprintf(
 		"postgresql://%s:%s@%s:%d/%s?sslmode=%s",
-		viper.GetString(config.DBUserKey),
-		viper.GetString(config.DBPassKey),
-		viper.GetString(config.DBHostKey),
-		viper.GetInt(config.DBPortKey),
-		viper.GetString(config.DBNameKey),
-		viper.GetString(config.DBSSLKey),
+		cfg.DB.User,
+		cfg.DB.Pass,
+		cfg.DB.Host,
+		cfg.DB.Port,
+		cfg.DB.Name,
+		cfg.DB.SSL,
 	)
 
 	dbPool, err := pgxpool.New(context.Background(), dsn)

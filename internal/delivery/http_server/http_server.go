@@ -9,7 +9,6 @@ import (
 	"github.com/kafkaphoenix/gotemplate/internal/delivery"
 	"github.com/kafkaphoenix/gotemplate/internal/infrastructure/config"
 	"github.com/rs/zerolog"
-	"github.com/spf13/viper"
 )
 
 type HTTPServer struct {
@@ -25,7 +24,7 @@ func NewHTTPServer(logger zerolog.Logger, handler *UserHandler) delivery.Server 
 }
 
 // Start initiate the HTTP server and listens for incoming requests.
-func (s *HTTPServer) Start() error {
+func (s *HTTPServer) Start(cfg *config.AppConfig) error {
 	router := mux.NewRouter()
 
 	// Define routes
@@ -34,11 +33,10 @@ func (s *HTTPServer) Start() error {
 	router.HandleFunc("/users/{id}", s.handler.Update).Methods("PATCH")
 	router.HandleFunc("/users/{id}", s.handler.Delete).Methods("DELETE")
 
-	appPort := viper.GetInt(config.AppPortKey)
-	s.logger.Info().Msgf("Starting server on :%d", appPort)
+	s.logger.Info().Msgf("Starting server on :%d", cfg.App.Port)
 
 	httpServer := &http.Server{
-		Addr:              fmt.Sprintf(":%d", appPort),
+		Addr:              fmt.Sprintf(":%d", cfg.App.Port),
 		Handler:           router,
 		ReadHeaderTimeout: 3 * time.Second,
 	}

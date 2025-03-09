@@ -1,0 +1,13 @@
+# demo config file for testing
+# docker container uses environment variables to set these values
+db:
+  host: "localhost"
+  port: 5432
+  user: "user"
+  pass: "password"
+  name: "dbname"
+  ssl: "disable"
+nats:
+  port: 4222
+app:
+  port: 8081

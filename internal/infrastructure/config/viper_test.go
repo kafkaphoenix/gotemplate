@@ -3,31 +3,66 @@
 package config_test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/kafkaphoenix/gotemplate/internal/infrastructure/config"
 
-	"github.com/joho/godotenv"
-	"github.com/spf13/viper"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestInit_OK(t *testing.T) {
-	// GIVEN
-	err := godotenv.Load("../../../.env")
-	require.NoError(t, err)
+type ConfigTestSuite struct {
+	suite.Suite
+}
 
+func TestConfigTestSuite(t *testing.T) {
+	suite.Run(t, new(ConfigTestSuite))
+}
+
+func (s *ConfigTestSuite) SetupSuite() {
+	config.Reset()
+}
+
+func (s *ConfigTestSuite) TearDownSuite() {
+	config.Reset()
+}
+
+func (s *ConfigTestSuite) TearDownTest() {
+	config.Reset()
+}
+
+func (s *ConfigTestSuite) TestLoadYAML_OK() {
 	// WHEN
-	config.Init()
+	cfg, err := config.Load()
+	s.Require().NoError(err)
 
 	// THEN
-	assert.Equal(t, "postgres", viper.GetString(config.DBHostKey))
-	assert.Equal(t, "5432", viper.GetString(config.DBPortKey))
-	assert.Equal(t, "user", viper.GetString(config.DBUserKey))
-	assert.Equal(t, "password", viper.GetString(config.DBPassKey))
-	assert.Equal(t, "dbname", viper.GetString(config.DBNameKey))
-	assert.Equal(t, "disable", viper.GetString(config.DBSSLKey))
-	assert.Equal(t, "4222", viper.GetString(config.NatsPortKey))
-	assert.Equal(t, "8081", viper.GetString(config.AppPortKey))
+	s.Equal("localhost", cfg.DB.Host)
+}
+
+// TestLoadEnv_OK tests env variable precedence over config file
+func (s *ConfigTestSuite) TestLoadEnv_OK() {
+	// GIVEN
+	os.Setenv("GOT_DB_HOST", "testDB")
+
+	// WHEN
+	cfg, err := config.Load()
+	s.Require().NoError(err)
+
+	// THEN
+	s.Equal("testDB", cfg.DB.Host)
+	os.Unsetenv("GOT_DB_HOST")
+}
+
+func (s *ConfigTestSuite) TestParseInt_OK() {
+	// GIVEN
+	os.Setenv("GOT_DB_PORT", "5432")
+
+	// WHEN
+	cfg, err := config.Load()
+	s.Require().NoError(err)
+
+	// THEN
+	s.Equal(5432, cfg.DB.Port)
+	os.Unsetenv("GOT_DB_PORT")
 }
