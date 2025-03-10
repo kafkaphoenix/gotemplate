@@ -9,7 +9,10 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "contact": {
+            "name": "Javier Aguilera",
+            "email": "jaguilerapuerta@gmail.com"
+        },
         "license": {
             "name": "MIT",
             "url": "https://github.com/kafkaphoenix/gotemplate/?tab=MIT-1-ov-file#readme"
@@ -19,9 +22,30 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/health": {
+            "get": {
+                "description": "Returns the health status of the service.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "health"
+                ],
+                "summary": "Health Check",
+                "operationId": "health-check",
+                "responses": {
+                    "200": {
+                        "description": "ok",
+                        "schema": {
+                            "$ref": "#/definitions/http_server.StatusResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/users": {
-            "post": {
-                "description": "Given a User object, it creates a new user in the system",
+            "get": {
+                "description": "Returns a list of Users optionally filtered by country, limit and offset.",
                 "consumes": [
                     "application/json"
                 ],
@@ -31,12 +55,96 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "Create an User",
+                "summary": "List Users",
+                "operationId": "list-users",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Country of the user",
+                        "name": "country",
+                        "in": "query"
+                    },
+                    {
                         "type": "integer",
-                        "description": "Account ID",
-                        "name": "id",
+                        "description": "Limit of users to be listed",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Offset of users to be listed",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.User"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "post": {
+                "description": "Creates a new User based on the data provided.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Create a User",
+                "operationId": "create-user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "First name of the user",
+                        "name": "FirstName",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Last name of the user",
+                        "name": "LastName",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Nickname of the user",
+                        "name": "Nickname",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Password of the user",
+                        "name": "Password",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Email of the user",
+                        "name": "Email",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Country of the user",
+                        "name": "Country",
                         "in": "path",
                         "required": true
                     }
@@ -45,21 +153,130 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/domain.User"
+                            "$ref": "#/definitions/entities.User"
                         }
                     },
+                    "400": {
+                        "description": "Invalid input"
+                    },
                     "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "string"
-                        }
+                        "description": "Internal server error"
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "delete": {
+                "description": "Removes a User based on the given ID.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Delete a User",
+                "operationId": "delete-user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the user",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "400": {
+                        "description": "Invalid user ID"
+                    },
+                    "500": {
+                        "description": "Internal server error"
+                    }
+                }
+            },
+            "patch": {
+                "description": "Updates a User based on the given ID and the provided data.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Update a User",
+                "operationId": "update-user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the user",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "First name of the user",
+                        "name": "FirstName",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Last name of the user",
+                        "name": "LastName",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Nickname of the user",
+                        "name": "Nickname",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Password of the user",
+                        "name": "Password",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Email of the user",
+                        "name": "Email",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Country of the user",
+                        "name": "Country",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No content"
+                    },
+                    "400": {
+                        "description": "Invalid input"
+                    },
+                    "500": {
+                        "description": "Internal server error"
                     }
                 }
             }
         }
     },
     "definitions": {
-        "domain.User": {
+        "entities.User": {
             "type": "object",
             "required": [
                 "country",
@@ -71,32 +288,50 @@ const docTemplate = `{
             ],
             "properties": {
                 "country": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "UK"
                 },
                 "created_at": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2021-07-01T00:00:00Z"
                 },
                 "email": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "johndoe@aexample.com"
                 },
                 "first_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "John"
                 },
                 "id": {
-                    "type": "string"
+                    "type": "string",
+                    "format": "uuid",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
                 },
                 "last_name": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Doe"
                 },
                 "nickname": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "johndoe"
                 },
                 "password": {
                     "type": "string",
-                    "minLength": 8
+                    "example": "password"
                 },
                 "updated_at": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "2021-07-01T00:00:00Z"
+                }
+            }
+        },
+        "http_server.StatusResponse": {
+            "type": "object",
+            "properties": {
+                "status": {
+                    "type": "string",
+                    "example": "ok"
                 }
             }
         }
@@ -106,9 +341,9 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "",
-	BasePath:         "",
-	Schemes:          []string{},
+	Host:             "localhost:8081",
+	BasePath:         "/",
+	Schemes:          []string{"http"},
 	Title:            "GoTemplate API",
 	Description:      "GoTemplate is a microservice example that follows clean architecture",
 	InfoInstanceName: "swagger",

@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/kafkaphoenix/gotemplate/internal/infrastructure/config"
+	"github.com/kafkaphoenix/gotemplate/internal/repository/config"
 )
 
 type Storage struct {

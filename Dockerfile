@@ -46,7 +46,7 @@ WORKDIR /app
 # copy binaries and config files
 COPY --from=builder --chown=${UID}:${GID} /app/gotemplate .
 # This is an example of how to copy a config file
-# COPY --from=builder --chown=${UID}:${GID} /app/internal/infrastructure/config/config.yml .
+# COPY --from=builder --chown=${UID}:${GID} /app/internal/repository/config/config.yml .
 
 # drop root privileges
 USER ${USER}

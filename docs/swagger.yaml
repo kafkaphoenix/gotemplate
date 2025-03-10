@@ -1,24 +1,34 @@
+basePath: /
 definitions:
-  domain.User:
+  entities.User:
     properties:
       country:
+        example: UK
         type: string
       created_at:
+        example: "2021-07-01T00:00:00Z"
         type: string
       email:
+        example: johndoe@aexample.com
         type: string
       first_name:
+        example: John
         type: string
       id:
+        example: 550e8400-e29b-41d4-a716-446655440000
+        format: uuid
         type: string
       last_name:
+        example: Doe
         type: string
       nickname:
+        example: johndoe
         type: string
       password:
-        minLength: 8
+        example: password
         type: string
       updated_at:
+        example: "2021-07-01T00:00:00Z"
         type: string
     required:
     - country
@@ -28,8 +38,17 @@ definitions:
     - nickname
     - password
     type: object
+  http_server.StatusResponse:
+    properties:
+      status:
+        example: ok
+        type: string
+    type: object
+host: localhost:8081
 info:
-  contact: {}
+  contact:
+    email: jaguilerapuerta@gmail.com
+    name: Javier Aguilera
   description: GoTemplate is a microservice example that follows clean architecture
   license:
     name: MIT
@@ -37,29 +56,179 @@ info:
   title: GoTemplate API
   version: "1.0"
 paths:
+  /health:
+    get:
+      description: Returns the health status of the service.
+      operationId: health-check
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ok
+          schema:
+            $ref: '#/definitions/http_server.StatusResponse'
+      summary: Health Check
+      tags:
+      - health
   /users:
+    get:
+      consumes:
+      - application/json
+      description: Returns a list of Users optionally filtered by country, limit and
+        offset.
+      operationId: list-users
+      parameters:
+      - description: Country of the user
+        in: query
+        name: country
+        type: string
+      - description: Limit of users to be listed
+        in: query
+        name: limit
+        type: integer
+      - description: Offset of users to be listed
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.User'
+            type: array
+        "500":
+          description: Internal server error
+      summary: List Users
+      tags:
+      - users
     post:
       consumes:
       - application/json
-      description: Given a User object, it creates a new user in the system
+      description: Creates a new User based on the data provided.
+      operationId: create-user
       parameters:
-      - description: Account ID
+      - description: First name of the user
         in: path
-        name: id
+        name: FirstName
         required: true
-        type: integer
+        type: string
+      - description: Last name of the user
+        in: path
+        name: LastName
+        required: true
+        type: string
+      - description: Nickname of the user
+        in: path
+        name: Nickname
+        required: true
+        type: string
+      - description: Password of the user
+        in: path
+        name: Password
+        required: true
+        type: string
+      - description: Email of the user
+        in: path
+        name: Email
+        required: true
+        type: string
+      - description: Country of the user
+        in: path
+        name: Country
+        required: true
+        type: string
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/domain.User'
+            $ref: '#/definitions/entities.User'
+        "400":
+          description: Invalid input
         "500":
-          description: Internal Server Error
-          schema:
-            type: string
-      summary: Create an User
+          description: Internal server error
+      summary: Create a User
       tags:
       - users
+  /users/{id}:
+    delete:
+      description: Removes a User based on the given ID.
+      operationId: delete-user
+      parameters:
+      - description: ID of the user
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No content
+        "400":
+          description: Invalid user ID
+        "500":
+          description: Internal server error
+      summary: Delete a User
+      tags:
+      - users
+    patch:
+      consumes:
+      - application/json
+      description: Updates a User based on the given ID and the provided data.
+      operationId: update-user
+      parameters:
+      - description: ID of the user
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: First name of the user
+        in: path
+        name: FirstName
+        required: true
+        type: string
+      - description: Last name of the user
+        in: path
+        name: LastName
+        required: true
+        type: string
+      - description: Nickname of the user
+        in: path
+        name: Nickname
+        required: true
+        type: string
+      - description: Password of the user
+        in: path
+        name: Password
+        required: true
+        type: string
+      - description: Email of the user
+        in: path
+        name: Email
+        required: true
+        type: string
+      - description: Country of the user
+        in: path
+        name: Country
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No content
+        "400":
+          description: Invalid input
+        "500":
+          description: Internal server error
+      summary: Update a User
+      tags:
+      - users
+schemes:
+- http
 swagger: "2.0"

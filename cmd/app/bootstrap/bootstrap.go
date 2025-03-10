@@ -3,12 +3,12 @@ package bootstrap
 import (
 	"fmt"
 
-	"github.com/kafkaphoenix/gotemplate/internal/infrastructure/config"
-	"github.com/kafkaphoenix/gotemplate/internal/infrastructure/logger"
+	"github.com/kafkaphoenix/gotemplate/internal/repository/config"
+	"github.com/kafkaphoenix/gotemplate/internal/repository/logger"
 
 	"github.com/kafkaphoenix/gotemplate/internal/delivery/http_server"
-	"github.com/kafkaphoenix/gotemplate/internal/infrastructure/postgres"
-	"github.com/kafkaphoenix/gotemplate/internal/usecase"
+	"github.com/kafkaphoenix/gotemplate/internal/repository/postgres"
+	"github.com/kafkaphoenix/gotemplate/internal/usecases"
 )
 
 func Run() error {
@@ -25,15 +25,15 @@ func Run() error {
 	}
 	defer storage.DB.Close()
 
-	// create repo, service per entity in the domain
+	// create repo, service per entity
 	userRepo := postgres.NewUserRepo(storage)
-	userService := usecase.NewUserService(userRepo)
+	userService := usecases.NewUserService(userRepo)
 
 	switch cfg.App.ServerType {
 	case config.ServerTypeGRPC:
 		return nil
 	case config.ServerTypeHTTP:
-		// create handler per entity in the domain
+		// create handler per entity
 		userHandler := http_server.NewUserHandler(logger, userService)
 
 		server := http_server.New(logger)

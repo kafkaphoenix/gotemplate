@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/kafkaphoenix/gotemplate/internal/infrastructure/config"
+	"github.com/kafkaphoenix/gotemplate/internal/repository/config"
 
 	"github.com/stretchr/testify/suite"
 )
